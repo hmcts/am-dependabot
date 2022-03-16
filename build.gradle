@@ -19,6 +19,28 @@ java {
   }
 }
 
+def versions = [
+  junit          : '5.5.0',
+  lombok         : '1.18.12',
+  gradlePitest   : '1.3.0',
+  pitest         : '1.4.2',
+  reformLogging  : '5.1.7',
+  reformS2sClient: '3.1.1',
+  serenity       : '2.2.12',
+  sonarPitest    : '0.5',
+  springBoot     : '2.3.3.RELEASE',
+  springHystrix  : '2.1.1.RELEASE',
+  swagger2Version: '2.10.5',
+  pact_version   : '3.5.24',
+  rest_assured   : '3.3.0',
+  cucumber       : '5.5.0',
+  feign_jackson  : '9.7.0',
+  drools         : '7.40.0.Final',
+  launchDarklySdk: "5.0.3",
+  log4JVersion   : '2.17.0',
+  logbackVersion : '1.2.10'
+]
+
 sourceSets {
   functionalTest {
     java {
@@ -182,24 +204,136 @@ ext {
 }
 
 dependencies {
-  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
-  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
-  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
-  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-json'
-
-  implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.6.6'
-
-  implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: '6.0.1'
-
-  implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: log4JVersion
-  implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: log4JVersion
-
-  testImplementation(platform('org.junit:junit-bom:5.8.2'))
-  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
-  testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', {
-    exclude group: 'junit', module: 'junit'
-    exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+  implementation('org.springframework.boot:spring-boot-starter-web') {
+    exclude group: 'org.glassfish', module: 'jakarta.el'
   }
+  implementation(group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: versions.springBoot)
+  implementation(group: 'org.springframework.boot', name: 'spring-boot-starter-actuator', version: versions.springBoot)
+  implementation(group: 'org.springframework.boot', name: 'spring-boot-starter-aop', version: versions.springBoot)
+  implementation(group: 'org.springframework.boot', name: 'spring-boot-starter-json', version: versions.springBoot)
+
+  implementation group: 'org.springframework.security', name: 'spring-security-core', version: '5.6.2'
+  implementation 'com.github.hmcts:properties-volume-spring-boot-starter:0.1.1'
+  implementation group: 'org.springframework', name: 'spring-core', version: '5.3.15'
+
+  // drools engine dependency
+
+  implementation group: 'org.drools', name: 'drools-core', version: versions.drools
+  implementation group: 'org.drools', name: 'drools-compiler', version: versions.drools
+  implementation group: 'org.drools', name: 'drools-decisiontables', version: versions.drools
+
+  implementation(group: 'org.kie', name: 'kie-ci', version: versions.drools) {
+    exclude group: 'org.jsoup', module: 'jsoup'
+    exclude group: 'org.apache.ant', module: 'ant'
+    exclude group: 'org.apache.ant', module: 'ant-launcher'
+    exclude group: 'org.glassfish', module: 'jakarta.el'
+    exclude group: 'jakarta.el', module: 'jakarta.el-api'
+    exclude group: 'com.google.protobuf', module: 'protobuf-java'
+
+  }
+  //Dependent on drools Jar. Can be removed CVE-2021-26291
+  implementation group: 'org.apache.maven', name: 'maven-core', version: '3.8.1'
+
+  implementation group: 'org.flywaydb', name: 'flyway-core', version: '8.4.4'
+
+  //Added for Spring Security Implementation
+  implementation(group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: versions.springBoot)
+
+  //Added for S2S and User Authentication
+  implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: versions.reformS2sClient
+
+  implementation group: 'com.google.guava', name: 'guava', version: '30.1-jre'
+  implementation group: 'javax.inject', name: 'javax.inject', version: '1'
+  implementation group: 'io.springfox', name: 'springfox-swagger2', version: versions.swagger2Version
+  implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: versions.swagger2Version
+  implementation group: 'io.springfox', name: 'springfox-spring-webmvc', version: versions.swagger2Version
+
+  implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: versions.reformLogging
+  implementation group: 'com.github.hmcts.java-logging', name: 'logging-appinsights', version: versions.reformLogging
+  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-hystrix', version: '2.2.5.RELEASE'
+  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-bootstrap', version: '3.0.4'
+
+  implementation('org.springframework.boot:spring-boot-starter-hateoas') {
+    exclude group: 'org.glassfish', module: 'jakarta.el'
+  }
+
+  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-websocket', version: '10.0.16'
+  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '9.0.58'
+  implementation group: 'org.hibernate', name: 'hibernate-core', version: '5.6.1.Final'
+
+  implementation group: 'org.postgresql', name: 'postgresql', version: '42.2.14'
+  implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+  implementation "org.springframework.security:spring-security-web"
+  implementation "org.springframework.security:spring-security-config"
+  implementation "org.springframework.boot:spring-boot-starter-oauth2-resource-server"
+  implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '2.0.1'
+  implementation group: 'com.nimbusds', name: 'nimbus-jose-jwt', version: '8.19'
+  implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
+  implementation 'commons-io:commons-io:2.8.0'
+  //CVE-2021-35515, CVE-2021-35516, CVE-2021-35517, CVE-2021-36090:
+  // To be cleaned up later
+  implementation group: 'org.apache.commons', name: 'commons-compress', version: '1.21'
+
+
+  testImplementation('com.opentable.components:otj-pg-embedded:0.13.3')
+  testImplementation('com.github.tomakehurst:wiremock-jre8:2.30.0')
+  testImplementation('org.springframework.cloud:spring-cloud-contract-wiremock:2.2.4.RELEASE')
+
+  testImplementation group: 'org.mockito', name: 'mockito-core', version: '3.11.2'
+  testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: versions.junit
+  testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: versions.junit
+  testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: versions.junit
+
+  testImplementation group: 'org.pitest', name: 'pitest', version: versions.pitest
+  testImplementation 'info.solidsoft.gradle.pitest:gradle-pitest-plugin:1.4.7'
+  testImplementation 'org.codehaus.sonar-plugins:sonar-pitest-plugin:0.5'
+  testImplementation 'org.springframework.boot:spring-boot-starter-test'
+  testImplementation 'org.springframework.security:spring-security-test'
+
+  testImplementation(group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: versions.springBoot) {
+    exclude group: 'junit', module: 'junit'
+  }
+
+  testImplementation 'com.github.hmcts:befta-fw:8.7.1'
+
+  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '2.2.5.RELEASE'
+
+  testImplementation(group: 'io.cucumber', name: 'cucumber-java', version: versions.cucumber) {
+    exclude group: 'javascript', module: 'jquery'
+  }
+  testImplementation group: 'io.rest-assured', name: 'rest-assured', version: versions.rest_assured
+  testImplementation group: 'io.cucumber', name: 'cucumber-junit', version: versions.cucumber
+  testImplementation group: 'io.github.openfeign', name: 'feign-jackson', version: versions.feign_jackson
+
+  testImplementation group: 'net.serenity-bdd', name: 'serenity-core', version: versions.serenity
+  testImplementation group: 'net.serenity-bdd', name: 'serenity-junit', version: versions.serenity
+  testImplementation group: 'net.serenity-bdd', name: 'serenity-rest-assured', version: versions.serenity
+  testImplementation group: 'net.serenity-bdd', name: 'serenity-spring', version: versions.serenity
+  testImplementation 'com.github.hmcts:fortify-client:1.2.0:all'
+
+  smokeTestImplementation group: 'net.serenity-bdd', name: 'serenity-core', version: versions.serenity
+  smokeTestImplementation group: 'net.serenity-bdd', name: 'serenity-junit', version: versions.serenity
+  smokeTestImplementation group: 'net.serenity-bdd', name: 'serenity-rest-assured', version: versions.serenity
+  smokeTestImplementation group: 'net.serenity-bdd', name: 'serenity-spring', version: versions.serenity
+  smokeTestImplementation group: 'io.rest-assured', name: 'rest-assured', version: versions.rest_assured
+  smokeTestImplementation group: 'commons-io', name: 'commons-io', version: '2.8.0'
+
+  integrationTestImplementation group: 'net.serenity-bdd', name: 'serenity-core', version: versions.serenity
+  integrationTestImplementation group: 'net.serenity-bdd', name: 'serenity-junit', version: versions.serenity
+  integrationTestImplementation group: 'net.serenity-bdd', name: 'serenity-rest-assured', version: versions.serenity
+  integrationTestImplementation group: 'net.serenity-bdd', name: 'serenity-spring', version: versions.serenity
+  integrationTestImplementation group: 'io.rest-assured', name: 'rest-assured', version: versions.rest_assured
+
+  integrationTestImplementation sourceSets.main.runtimeClasspath
+  integrationTestImplementation sourceSets.test.runtimeClasspath
+
+  compileOnly group: 'org.projectlombok', name: 'lombok', version: versions.lombok
+  annotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
+  smokeTestImplementation sourceSets.main.runtimeClasspath
+  smokeTestImplementation sourceSets.test.runtimeClasspath
+  smokeTestCompileOnly group: 'org.projectlombok', name: 'lombok', version: versions.lombok
+  smokeTestAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 }
 
 mainClassName = 'uk.gov.hmcts.reform.demo.Application'
