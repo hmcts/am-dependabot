@@ -277,7 +277,7 @@ dependencies {
 
 
   testImplementation('com.opentable.components:otj-pg-embedded:0.13.3')
-  testImplementation('com.github.tomakehurst:wiremock-jre8:2.30.0')
+  testImplementation('com.github.tomakehurst:wiremock-jre8:2.32.0')
   testImplementation('org.springframework.cloud:spring-cloud-contract-wiremock:2.2.4.RELEASE')
 
   testImplementation group: 'org.mockito', name: 'mockito-core', version: '3.11.2'
