@@ -92,6 +92,9 @@ jobs:
             core.setOutput('base-branch', base_branch);
             core.setOutput('prs-string', prs.join('\n'));
             
+            console.log('Base Branch: ' + base_branch);
+            console.log('prs-string: ' + prs.join('\n'));
+
             combined = branches.join(' ')
             console.log('Combined: ' + combined);
             return combined
@@ -113,8 +116,8 @@ jobs:
           basebranch="${BASE_BRANCH%\"}"
           basebranch="${basebranch#\"}"
           
-          echo $basebranch
-          echo $sourcebranches
+          echo 'Base Branch: $basebranch'
+          echo 'Source Branches: $sourcebranches'
 
           git config pull.rebase false
           git config user.name github-actions
