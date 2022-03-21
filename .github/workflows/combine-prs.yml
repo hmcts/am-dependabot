@@ -125,10 +125,12 @@ jobs:
           
           combineBranchExists=$(git ls-remote --heads origin ${COMBINE_BRANCH_NAME})
 
+          echo $combineBranchExists
+
           if [[ -z ${combineBranchExists} ]]; then
-            echo 'Combined branch exists'
-          else
             echo 'Combined branch does not exist'
+          else
+            echo 'Combined branch exists'
           fi
 
           # git branch $COMBINE_BRANCH_NAME $basebranch
