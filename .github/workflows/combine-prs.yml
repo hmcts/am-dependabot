@@ -116,13 +116,21 @@ jobs:
           basebranch="${BASE_BRANCH%\"}"
           basebranch="${basebranch#\"}"
           
-          echo 'Base Branch: $basebranch'
-          echo 'Source Branches: $sourcebranches'
+          echo $basebranch
+          echo $sourcebranches
 
           git config pull.rebase false
           git config user.name github-actions
           git config user.email github-actions@github.com
           
+          combineBranchExists=$(git ls-remote --heads origin ${$COMBINE_BRANCH_NAME})
+
+          if [[ -z ${combineBranchExists} ]]; then
+            echo 'Combined branch exists'
+          else
+            echo 'Combined branch does not exist'
+          fi
+
           # git branch $COMBINE_BRANCH_NAME $basebranch
           # git checkout $COMBINE_BRANCH_NAME
           # git pull origin $sourcebranches --no-edit
