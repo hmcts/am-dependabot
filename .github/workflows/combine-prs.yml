@@ -111,15 +111,15 @@ jobs:
           BRANCHES_TO_COMBINE: ${{ steps.fetch-branch-names.outputs.result }}
           COMBINE_BRANCH_NAME: ${{ github.event.inputs.combineBranchName }}
         run: |
-          echo "$BRANCHES_TO_COMBINE"
+          # echo "$BRANCHES_TO_COMBINE"
           sourcebranches="${BRANCHES_TO_COMBINE%\"}"
           sourcebranches="${sourcebranches#\"}"
           
           basebranch="${BASE_BRANCH%\"}"
           basebranch="${basebranch#\"}"
           
-          echo $basebranch
-          echo $sourcebranches
+          # echo $basebranch
+          # echo $sourcebranches
 
           git config pull.rebase false
           git config user.name github-actions
@@ -131,6 +131,11 @@ jobs:
 
           branchesArray=($sourcebranches)
           echo "Number of branches in the array: ${#branchesArray[@]}"
+
+          for branch in "${branchesArray[@]}"
+          do
+            printf "Branch Name: $branch\n"
+          done
 
           # if [[ -z ${combineBranchExists} ]]; then
           #   echo "Combined branch $COMBINE_BRANCH_NAME does not exist. Creating branch $COMBINE_BRANCH_NAME"
