@@ -127,18 +127,21 @@ jobs:
           
           combineBranchExists=$(git ls-remote --heads origin ${COMBINE_BRANCH_NAME})
 
-          echo $combineBranchExists
+          echo "Output of git ls command: $combineBranchExists"
 
-          if [[ -z ${combineBranchExists} ]]; then
-            echo "Combined branch $COMBINE_BRANCH_NAME does not exist. Creating branch $COMBINE_BRANCH_NAME"
-            git branch $COMBINE_BRANCH_NAME $basebranch
-          else
-            echo "Combined branch $COMBINE_BRANCH_NAME already exists"
-          fi
+          branchesArray=($sourcebranches)
+          echo "Number of branches in the array: ${#branchesArray[@]}"
 
-          git checkout $COMBINE_BRANCH_NAME
-          git pull origin $sourcebranches --no-edit
-          git push origin $COMBINE_BRANCH_NAME
+          # if [[ -z ${combineBranchExists} ]]; then
+          #   echo "Combined branch $COMBINE_BRANCH_NAME does not exist. Creating branch $COMBINE_BRANCH_NAME"
+          #   git branch $COMBINE_BRANCH_NAME $basebranch
+          # else
+          #   echo "Combined branch $COMBINE_BRANCH_NAME already exists"
+          # fi
+
+          # git checkout $COMBINE_BRANCH_NAME
+          # git pull origin $sourcebranches --no-edit
+          # git push origin $COMBINE_BRANCH_NAME
 
       # Creates a PR with the new combined branch
       # - uses: actions/github-script@v3
