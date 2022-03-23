@@ -130,7 +130,7 @@ jobs:
           echo "Output of git ls command: $combineBranchExists"
 
           branchesArray=($sourcebranches)
-          echo "Number of branches in the array: ${#branchesArray[@]}"
+          echo "Number of branches: ${#branchesArray[@]}"
 
           if [[ -z ${combineBranchExists} ]]; then
             echo "Combined branch $COMBINE_BRANCH_NAME does not exist. Creating branch $COMBINE_BRANCH_NAME"
