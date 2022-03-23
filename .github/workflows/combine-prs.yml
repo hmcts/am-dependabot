@@ -148,7 +148,7 @@ jobs:
             git pull origin $branch --no-edit || continue
           done
 
-          # git push origin $COMBINE_BRANCH_NAME
+          git push origin $COMBINE_BRANCH_NAME
 
       # Creates a PR with the new combined branch
       # - uses: actions/github-script@v3
