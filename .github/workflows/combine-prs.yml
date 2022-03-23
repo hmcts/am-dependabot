@@ -132,20 +132,21 @@ jobs:
           branchesArray=($sourcebranches)
           echo "Number of branches in the array: ${#branchesArray[@]}"
 
+          if [[ -z ${combineBranchExists} ]]; then
+            echo "Combined branch $COMBINE_BRANCH_NAME does not exist. Creating branch $COMBINE_BRANCH_NAME"
+            git branch $COMBINE_BRANCH_NAME $basebranch
+          else
+            echo "Combined branch $COMBINE_BRANCH_NAME already exists"
+          fi
+
+          git checkout $COMBINE_BRANCH_NAME
+
           for branch in "${branchesArray[@]}"
           do
             printf "Branch Name: $branch\n"
+            git pull origin $branch --no-edit
           done
 
-          # if [[ -z ${combineBranchExists} ]]; then
-          #   echo "Combined branch $COMBINE_BRANCH_NAME does not exist. Creating branch $COMBINE_BRANCH_NAME"
-          #   git branch $COMBINE_BRANCH_NAME $basebranch
-          # else
-          #   echo "Combined branch $COMBINE_BRANCH_NAME already exists"
-          # fi
-
-          # git checkout $COMBINE_BRANCH_NAME
-          # git pull origin $sourcebranches --no-edit
           # git push origin $COMBINE_BRANCH_NAME
 
       # Creates a PR with the new combined branch
