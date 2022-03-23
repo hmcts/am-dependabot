@@ -127,24 +127,25 @@ jobs:
           
           combineBranchExists=$(git ls-remote --heads origin ${COMBINE_BRANCH_NAME})
 
-          echo "Output of git ls command: $combineBranchExists"
+          echo "OUTPUT OF GIT LS COMMAND: $combineBranchExists"
 
           branchesArray=($sourcebranches)
-          echo "Number of branches: ${#branchesArray[@]}"
+          echo "NUMBER OF BRANCHES: ${#branchesArray[@]}"
 
           if [[ -z ${combineBranchExists} ]]; then
-            echo "Combined branch $COMBINE_BRANCH_NAME does not exist. Creating branch $COMBINE_BRANCH_NAME"
+            echo "COMBINED BRANCH $COMBINE_BRANCH_NAME DOES NOT EXIST. CREATING BRANCH $COMBINE_BRANCH_NAME"
+            
             git branch $COMBINE_BRANCH_NAME $basebranch
           else
-            echo "Combined branch $COMBINE_BRANCH_NAME already exists"
+            echo "COMBINED BRANCH $COMBINE_BRANCH_NAME ALREADY EXISTS"
           fi
 
           git checkout $COMBINE_BRANCH_NAME
 
           for branch in "${branchesArray[@]}"
           do
-            printf "Branch Name: $branch\n"
-            git pull origin $branch --no-edit
+            printf "BRANCH NAME: $branch\n"
+            git pull origin $branch --no-edit || continue
           done
 
           # git push origin $COMBINE_BRANCH_NAME
