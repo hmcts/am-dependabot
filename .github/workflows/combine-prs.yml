@@ -52,8 +52,8 @@ jobs:
               repo: context.repo.repo
             });
 
-            const jsonObj = JSON.parse(pulls);
-            console.log(jsonObj);
+            # const jsonObj = JSON.parse(pulls);
+            # console.log(jsonObj);
 
             # pulls.sort(GetSortOrder("number"));
 
