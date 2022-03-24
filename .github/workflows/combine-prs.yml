@@ -100,8 +100,9 @@ jobs:
             console.log('prs-string: ' + prs.join('\n'));
 
             combined = branches.join(' ')
-            echo "NUMBER OF BRANCHES: ${#branchesArray[@]}"
+            console.log('NUMBER OF BRANCHES: ' + branches.length);
             console.log('COMBINED BRANCHES: ' + combined);
+            
             return combined
 
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
