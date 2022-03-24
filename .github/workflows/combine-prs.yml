@@ -52,7 +52,11 @@ jobs:
               repo: context.repo.repo
             });
 
-            pulls.sort(GetSortOrder("number"));
+            const jsonObj = JSON.parse(pulls);
+            console.log(jsonObj);
+
+            # pulls.sort(GetSortOrder("number"));
+
             # for (var item in array) {
             #   console.log(array[item].EmployeeName);
             # }
