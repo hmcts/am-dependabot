@@ -50,7 +50,9 @@ jobs:
             const pulls = await github.paginate('GET /repos/:owner/:repo/pulls', {
               owner: context.repo.owner,
               repo: context.repo.repo,
-              state: 'open'
+              state: 'open',
+              sort: 'created',
+              direction: 'asc'
             });
 
             //const jsonObj = JSON.parse(pulls);
