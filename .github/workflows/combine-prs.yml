@@ -39,7 +39,8 @@ jobs:
             const pulls = await github.paginate('GET /repos/:owner/:repo/pulls', {
               owner: context.repo.owner,
               repo: context.repo.repo
-            }).sort('number');
+            });
+            console.log(pulls);
             branches = [];
             prs = [];
             base_branch = null;
