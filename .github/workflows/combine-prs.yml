@@ -142,7 +142,7 @@ jobs:
           for branch in "${branchesArray[@]}"
           do
             printf "BRANCH NAME: $branch\n"
-            git pull origin $branch --no-edit || continue
+            git pull origin $branch --no-edit
           done
 
           git push origin $COMBINE_BRANCH_NAME
