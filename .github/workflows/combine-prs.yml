@@ -49,12 +49,12 @@ jobs:
             base_branch = null;
             for (const pull of pulls) {
               const branch = pull['head']['ref'];
-              console.log('Pull for branch: ' + branch);
+              console.log('PULL FOR BRANCH: ' + branch);
               if (branch.startsWith('${{ github.event.inputs.branchPrefix }}')) {
-                console.log('Branch matched: ' + branch);
+                console.log('BRANCH MATCHED: ' + branch);
                 statusOK = true;
                 if(${{ github.event.inputs.mustBeGreen }}) {
-                  console.log('Checking green status: ' + branch);
+                  console.log('CHECKING GREEN STATUS: ' + branch);
                   const statuses = await github.paginate('GET /repos/{owner}/{repo}/commits/{ref}/status', {
                     owner: context.repo.owner,
                     repo: context.repo.repo,
@@ -62,25 +62,25 @@ jobs:
                   });
                   if(statuses.length > 0) {
                     const latest_status = statuses[0]['state'];
-                    console.log('Validating status: ' + latest_status);
+                    console.log('VALIDATING STATUS: ' + latest_status);
                     if(latest_status != 'success') {
-                      console.log('Discarding ' + branch + ' with status ' + latest_status);
+                      console.log('DISCARDING ' + branch + ' WITH STATUS ' + latest_status);
                       statusOK = false;
                     }
                   }
                 }
-                console.log('Checking labels: ' + branch);
+                console.log('CHECKING LABELS: ' + branch);
                 const labels = pull['labels'];
                 for(const label of labels) {
                   const labelName = label['name'];
-                  console.log('Checking label: ' + labelName);
+                  console.log('CHECKING LABEL: ' + labelName);
                   if(labelName == '${{ github.event.inputs.ignoreLabel }}') {
-                    console.log('Discarding ' + branch + ' with label ' + labelName);
+                    console.log('DISCARDING ' + branch + ' WITH LABEL ' + labelName);
                     statusOK = false;
                   }
                 }
                 if (statusOK) {
-                  console.log('Adding branch to array: ' + branch);
+                  console.log('ADDING BRANCH TO ARRAY: ' + branch);
                   branches.push(branch);
                   prs.push('#' + pull['number'] + ' ' + pull['title']);
                   base_branch = pull['base']['ref'];
@@ -100,7 +100,8 @@ jobs:
             console.log('prs-string: ' + prs.join('\n'));
 
             combined = branches.join(' ')
-            console.log('Combined: ' + combined);
+            echo "NUMBER OF BRANCHES: ${#branchesArray[@]}"
+            console.log('COMBINED BRANCHES: ' + combined);
             return combined
 
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -115,26 +116,17 @@ jobs:
           BRANCHES_TO_COMBINE: ${{ steps.fetch-branch-names.outputs.result }}
           COMBINE_BRANCH_NAME: ${{ github.event.inputs.combineBranchName }}
         run: |
-          # echo "$BRANCHES_TO_COMBINE"
           sourcebranches="${BRANCHES_TO_COMBINE%\"}"
           sourcebranches="${sourcebranches#\"}"
           
           basebranch="${BASE_BRANCH%\"}"
           basebranch="${basebranch#\"}"
-          
-          # echo $basebranch
-          # echo $sourcebranches
 
           git config pull.rebase false
           git config user.name github-actions
           git config user.email github-actions@github.com
           
           combineBranchExists=$(git ls-remote --heads origin ${COMBINE_BRANCH_NAME})
-
-          echo "OUTPUT OF GIT LS COMMAND: $combineBranchExists"
-
-          branchesArray=($sourcebranches)
-          echo "NUMBER OF BRANCHES: ${#branchesArray[@]}"
 
           if [[ -z ${combineBranchExists} ]]; then
             echo "COMBINED BRANCH $COMBINE_BRANCH_NAME DOES NOT EXIST. CREATING BRANCH $COMBINE_BRANCH_NAME"
@@ -146,6 +138,7 @@ jobs:
 
           git checkout $COMBINE_BRANCH_NAME
 
+          branchesArray=($sourcebranches)
           for branch in "${branchesArray[@]}"
           do
             printf "BRANCH NAME: $branch\n"
@@ -155,20 +148,20 @@ jobs:
           git push origin $COMBINE_BRANCH_NAME
 
       # Creates a PR with the new combined branch
-      # - uses: actions/github-script@v3
-      #   name: Create Combined Pull Request
-      #   env:
-      #     PRS_STRING: ${{ steps.fetch-branch-names.outputs.prs-string }}
-      #   with:
-      #     github-token: ${{secrets.GITHUB_TOKEN}}
-      #     script: |
-      #       const prString = process.env.PRS_STRING;
-      #       const body = 'This PR was created by the Combine PRs action by combining the following PRs:\n' + prString;
-      #       await github.pulls.create({
-      #         owner: context.repo.owner,
-      #         repo: context.repo.repo,
-      #         title: 'Combined PR',
-      #         head: '${{ github.event.inputs.combineBranchName }}',
-      #         base: '${{ steps.fetch-branch-names.outputs.base-branch }}',
-      #         body: body
-      #       });
+      - uses: actions/github-script@v3
+        name: Create Combined Pull Request
+        env:
+          PRS_STRING: ${{ steps.fetch-branch-names.outputs.prs-string }}
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const prString = process.env.PRS_STRING;
+            const body = 'This PR was created by the Combine PRs action by combining the following PRs:\n' + prString;
+            await github.pulls.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: 'Combined PR',
+              head: '${{ github.event.inputs.combineBranchName }}',
+              base: '${{ steps.fetch-branch-names.outputs.base-branch }}',
+              body: body
+            });
