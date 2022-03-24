@@ -36,28 +36,6 @@ jobs:
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
-            var array = [{    
-                "EmployeeName": "John",    
-                "Experience": "12",    
-                "Technology": "SharePoint"    
-            }, {    
-                "EmployeeName": "Charles",    
-                "Experience": "9",    
-                "Technology": "ASP.NET"    
-            }, {    
-                "EmployeeName": "Jo",    
-                "Experience": "3",    
-                "Technology": "JAVA"    
-            }, {    
-                "EmployeeName": "Daine",    
-                "Experience": "7",    
-                "Technology": "Sql Server"    
-            }, {    
-                "EmployeeName": "Zain",    
-                "Experience": "6",    
-                "Technology": "C#"    
-            }];
-
             function GetSortOrder(prop) {    
               return function(a, b) {    
                   if (a[prop] > b[prop]) {    
@@ -69,16 +47,18 @@ jobs:
               }
             }
 
-            array.sort(GetSortOrder("EmployeeName"));
-            for (var item in array) {
-              console.log(array[item].EmployeeName);
-            }
-
             const pulls = await github.paginate('GET /repos/:owner/:repo/pulls', {
               owner: context.repo.owner,
               repo: context.repo.repo
             });
+
+            pulls.sort(GetSortOrder("number"));
+            # for (var item in array) {
+            #   console.log(array[item].EmployeeName);
+            # }
+
             console.log(pulls);
+
             branches = [];
             prs = [];
             base_branch = null;
