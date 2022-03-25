@@ -193,5 +193,7 @@ jobs:
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
-            const { prsToClose } = process.env
-            console.log('prsToClose: ${prsToClose}');
+            const { prsToClose } = process.env;
+            closePrs = ${prsToClose};
+
+            console.log('prsToClose: ' + closePrs);
