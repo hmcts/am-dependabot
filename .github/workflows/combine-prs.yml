@@ -183,7 +183,7 @@ jobs:
           prNos="Ubuntu;Linux Mint;Debian;Arch;Fedora"
           echo "prsToClose=${prNos}" >> $GITHUB_ENV
 
-      - name: Created combined branch
+      - name: PRINT ENV
         run: |
           printenv
 
