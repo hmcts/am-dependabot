@@ -184,6 +184,6 @@ jobs:
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
-            prsToClose = '{{ env('prsToClose') }}';
+            prsToClose = '{{ env.prsToClose }}';
 
             console.log('prsToClose: ' + prsToClose);
