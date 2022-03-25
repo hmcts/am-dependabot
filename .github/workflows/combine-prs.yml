@@ -118,6 +118,7 @@ jobs:
           COMBINE_BRANCH_NAME: ${{ github.event.inputs.combineBranchName }}
         run: |
           declare -a prNos
+
           sourcebranches="${BRANCHES_TO_COMBINE%\"}"
           sourcebranches="${sourcebranches#\"}"
           
@@ -145,7 +146,7 @@ jobs:
           do
             IFS='~' read -ra splitArr <<< "$branch"
 
-            prNos+=${splitArr[0]}
+            prNos+=${splitArr[0]"~"}
             branchName=${splitArr[1]}
 
             echo "BRANCH NAME: $branchName\n"
@@ -153,6 +154,9 @@ jobs:
           done
 
           echo ${prNos[*]}
+
+          echo "prsToClose=${prNos[*]}" >> $GITHUB_ENV
+
           # git push origin $COMBINE_BRANCH_NAME
 
       # Creates a PR with the new combined branch
@@ -173,3 +177,13 @@ jobs:
       #         base: '${{ steps.fetch-branch-names.outputs.base-branch }}',
       #         body: body
       #       });
+
+      - uses: actions/github-script@v3
+        id: close-merged-prs
+        name: Close Merged Pull Requests
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            prsToClose = '{{ env('prsToClose') }}';
+
+            console.log('prsToClose: ' + prsToClose);
