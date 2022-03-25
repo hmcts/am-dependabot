@@ -183,12 +183,14 @@ jobs:
           prNos="Ubuntu;Linux Mint;Debian;Arch;Fedora"
           echo "prsToClose=${prNos}" >> $GITHUB_ENV
 
+          echo $prsToClose
+
       - uses: actions/github-script@v3
         id: close-merged-prs
         name: Close Merged Pull Requests
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
-            prsToClose = '{{ env.prsToClose }}';
+            prsToClose = '{{ env('prsToClose') }}';
 
             console.log('prsToClose: ' + prsToClose);
