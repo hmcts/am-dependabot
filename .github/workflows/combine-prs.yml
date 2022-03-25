@@ -146,7 +146,7 @@ jobs:
           do
             IFS='~' read -ra splitArr <<< "$branch"
 
-            prNos+=${splitArr[0]"~"}
+            prNos+=${splitArr[0]}"~"
             branchName=${splitArr[1]}
 
             echo "BRANCH NAME: $branchName\n"
