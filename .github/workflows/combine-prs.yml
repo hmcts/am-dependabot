@@ -81,7 +81,7 @@ jobs:
                 }
                 if (statusOK) {
                   console.log('ADDING BRANCH TO ARRAY: ' + branch);
-                  branches.push(branch);
+                  branches.push(pull['number'] + '~' + branch);
                   prs.push('#' + pull['number'] + ' ' + pull['title']);
                   base_branch = pull['base']['ref'];
                 }
@@ -117,6 +117,7 @@ jobs:
           BRANCHES_TO_COMBINE: ${{ steps.fetch-branch-names.outputs.result }}
           COMBINE_BRANCH_NAME: ${{ github.event.inputs.combineBranchName }}
         run: |
+          prNos = []
           sourcebranches="${BRANCHES_TO_COMBINE%\"}"
           sourcebranches="${sourcebranches#\"}"
           
@@ -142,27 +143,33 @@ jobs:
           branchesArray=($sourcebranches)
           for branch in "${branchesArray[@]}"
           do
-            printf "BRANCH NAME: $branch\n"
-            git pull origin $branch --no-edit
+            IFS='~' read -ra splitArr <<< "$branch"
+
+            prNos.push(${splitArr[0]})
+            branchName=${splitArr[1]}
+
+            echo "BRANCH NAME: $branchName\n"
+            # git pull origin $branchName --no-edit
           done
 
-          git push origin $COMBINE_BRANCH_NAME
+          echo $prNos
+          # git push origin $COMBINE_BRANCH_NAME
 
       # Creates a PR with the new combined branch
-      - uses: actions/github-script@v3
-        name: Create Combined Pull Request
-        env:
-          PRS_STRING: ${{ steps.fetch-branch-names.outputs.prs-string }}
-        with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
-          script: |
-            const prString = process.env.PRS_STRING;
-            const body = 'This PR was created by the Combine PRs action by combining the following PRs:\n' + prString;
-            await github.pulls.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              title: 'Combined PR',
-              head: '${{ github.event.inputs.combineBranchName }}',
-              base: '${{ steps.fetch-branch-names.outputs.base-branch }}',
-              body: body
-            });
+      # - uses: actions/github-script@v3
+      #   name: Create Combined Pull Request
+      #   env:
+      #     PRS_STRING: ${{ steps.fetch-branch-names.outputs.prs-string }}
+      #   with:
+      #     github-token: ${{secrets.GITHUB_TOKEN}}
+      #     script: |
+      #       const prString = process.env.PRS_STRING;
+      #       const body = 'This PR was created by the Combine PRs action by combining the following PRs:\n' + prString;
+      #       await github.pulls.create({
+      #         owner: context.repo.owner,
+      #         repo: context.repo.repo,
+      #         title: 'Combined PR',
+      #         head: '${{ github.event.inputs.combineBranchName }}',
+      #         base: '${{ steps.fetch-branch-names.outputs.base-branch }}',
+      #         body: body
+      #       });
