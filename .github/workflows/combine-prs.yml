@@ -117,7 +117,7 @@ jobs:
           BRANCHES_TO_COMBINE: ${{ steps.fetch-branch-names.outputs.result }}
           COMBINE_BRANCH_NAME: ${{ github.event.inputs.combineBranchName }}
         run: |
-          prNos = []
+          declare -a prNos
           sourcebranches="${BRANCHES_TO_COMBINE%\"}"
           sourcebranches="${sourcebranches#\"}"
           
@@ -145,14 +145,14 @@ jobs:
           do
             IFS='~' read -ra splitArr <<< "$branch"
 
-            prNos.push(${splitArr[0]})
+            prNos+=${splitArr[0]}
             branchName=${splitArr[1]}
 
             echo "BRANCH NAME: $branchName\n"
             # git pull origin $branchName --no-edit
           done
 
-          echo $prNos
+          echo ${prNos[*]}
           # git push origin $COMBINE_BRANCH_NAME
 
       # Creates a PR with the new combined branch
