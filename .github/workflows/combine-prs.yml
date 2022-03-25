@@ -183,7 +183,11 @@ jobs:
           prNos="Ubuntu;Linux Mint;Debian;Arch;Fedora"
           echo "prsToClose=${prNos}" >> $GITHUB_ENV
 
-          echo $prsToClose
+          printenv
+
+      - name: Created combined branch
+        run: |
+          printenv
 
       - uses: actions/github-script@v3
         id: close-merged-prs
@@ -191,6 +195,6 @@ jobs:
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
-            prsToClose = '{{ env('prsToClose') }}';
+            // prsToClose = '{{ env('prsToClose') }}';
 
             console.log('prsToClose: ' + prsToClose);
