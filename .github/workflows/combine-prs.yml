@@ -193,30 +193,30 @@ jobs:
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
-            const closePrs = process.env.CLOSEPRS;
+            const closePrs = '2~3~';
+
+            // const closePrs = process.env.CLOSEPRS;
             // console.log('prsToClose: ' + closePrs);
 
             const prArray = closePrs.split("~");
-            prArray.pop(); // Remove the last empty '~' character
+            prArray.pop(); // Remove the last '~' character
 
             for(const pr of prArray) {
-              console.log('PR TO CLOSE: ' + pr);
-            }
+              console.log('ATTEMPTING TO CLOSE PULL REQUEST : ' + pr);
 
-            const closePRStatus =   await github.pulls.update({
+              const closePRStatus =   await github.pulls.update({
                                       owner: context.repo.owner,
                                       repo: context.repo.repo,
-                                      pull_number: 2,
+                                      pull_number: pr,
                                       state: 'closed'
                                     });
 
-            console.log('Close PR Satus: ' + closePRStatus);
-            console.log('String: ' + String(closePRStatus));
-            console.log('JSON.stringify: ' + JSON.stringify(closePRStatus));
-            console.log('Status Code: ' + closePRStatus['status']);
+              // console.log('JSON.stringify: ' + JSON.stringify(closePRStatus));
+              console.log('STATUS CODE: ' + closePRStatus['status']);
 
-            if (closePRStatus['status'] == '200') {
-              console.log('PR ' + 2 + ' Closed Successfully.');
-            } else {
-              console.log('PR ' + 2 + ' COULD NOT BE CLOSED.');
+              if (closePRStatus['status'] == '200') {
+                console.log('PULL REQUEST ' + pr + ' CLOSED SUCCESSFULLY.');
+              } else {
+                console.log('PULL REQUEST ' + pr + ' COULD NOT BE CLOSED.');
+              }
             }
