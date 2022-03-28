@@ -213,3 +213,10 @@ jobs:
             console.log('Close PR Satus: ' + closePRStatus);
             console.log('String: ' + String(closePRStatus));
             console.log('JSON.stringify: ' + JSON.stringify(closePRStatus));
+            console.log('Status Code: ' + closePRStatus['status']);
+
+            if (closePRStatus['status'] == '200') {
+              console.log('PR ' + 2 + ' Closed Successfully.');
+            } else {
+              console.log('PR ' + 2 + ' COULD NOT BE CLOSED.');
+            }
