@@ -181,12 +181,12 @@ jobs:
                 base: '${{ steps.fetch-branch-names.outputs.base-branch }}',
                 body: body
               });
-            
-              if (response.includes('A pull request already exists')) {
-                console.log('A PULL REQUEST ALREADY EXISTS FOR BRANCH ${{ github.event.inputs.combineBranchName }}');
-              }
             } catch (error) {
-              console.log('ERROR CREATING COMBINED PULL REQUEST: ' + error);
+                if (error.includes('A pull request already exists')) {
+                  console.log('A PULL REQUEST ALREADY EXISTS FOR BRANCH ${{ github.event.inputs.combineBranchName }}');
+                } else {
+                  console.log('ERROR CREATING COMBINED PULL REQUEST: ' + error);
+                }
             }
 
       # - name: Created combined branch
