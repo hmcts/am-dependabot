@@ -150,6 +150,7 @@ jobs:
             branchName=${splitArr[1]}
 
             echo "--------------------------------------------------"
+            echo "PR NUMBER: ${splitArr[0]}"
             echo "BRANCH NAME: $branchName\n"
             git pull origin $branchName --no-edit
           done
