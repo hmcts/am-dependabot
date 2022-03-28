@@ -206,6 +206,6 @@ jobs:
             const closePRStatus =   await github.pulls.update({
                                       owner: context.repo.owner,
                                       repo: context.repo.repo,
-                                      pull_number: 2
+                                      pull_number: 2,
                                       state: 'closed'
                                     });
