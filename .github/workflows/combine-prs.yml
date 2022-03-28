@@ -149,34 +149,35 @@ jobs:
             prNos+=${splitArr[0]}"~"
             branchName=${splitArr[1]}
 
+            console.log('--------------------------------------------------');
             echo "BRANCH NAME: $branchName\n"
-            # git pull origin $branchName --no-edit
+            git pull origin $branchName --no-edit
           done
 
           echo ${prNos[*]}
 
           echo "CLOSEPRS=${prNos[*]}" >> $GITHUB_ENV
 
-          # git push origin $COMBINE_BRANCH_NAME
+          git push origin $COMBINE_BRANCH_NAME
 
       # Creates a PR with the new combined branch
-      # - uses: actions/github-script@v3
-      #   name: Create Combined Pull Request
-      #   env:
-      #     PRS_STRING: ${{ steps.fetch-branch-names.outputs.prs-string }}
-      #   with:
-      #     github-token: ${{secrets.GITHUB_TOKEN}}
-      #     script: |
-      #       const prString = process.env.PRS_STRING;
-      #       const body = 'This PR was created by the Combine PRs action by combining the following PRs:\n' + prString;
-      #       await github.pulls.create({
-      #         owner: context.repo.owner,
-      #         repo: context.repo.repo,
-      #         title: 'Combined PR',
-      #         head: '${{ github.event.inputs.combineBranchName }}',
-      #         base: '${{ steps.fetch-branch-names.outputs.base-branch }}',
-      #         body: body
-      #       });
+      - uses: actions/github-script@v3
+        name: Create Combined Pull Request
+        env:
+          PRS_STRING: ${{ steps.fetch-branch-names.outputs.prs-string }}
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const prString = process.env.PRS_STRING;
+            const body = 'This PR was created by the Combine PRs action by combining the following PRs:\n' + prString;
+            await github.pulls.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: 'Combined PR',
+              head: '${{ github.event.inputs.combineBranchName }}',
+              base: '${{ steps.fetch-branch-names.outputs.base-branch }}',
+              body: body
+            });
 
       # - name: Created combined branch
       #   run: |
@@ -193,15 +194,16 @@ jobs:
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
-            const closePrs = '2~3~';
+            // const closePrs = '2~3~'; // Use this for tests
 
-            // const closePrs = process.env.CLOSEPRS;
-            // console.log('prsToClose: ' + closePrs);
+            const closePrs = process.env.CLOSEPRS;
+            console.log('prsToClose: ' + closePrs);
 
             const prArray = closePrs.split("~");
             prArray.pop(); // Remove the last '~' character
 
             for(const pr of prArray) {
+              console.log('--------------------------------------------------');
               console.log('ATTEMPTING TO CLOSE PULL REQUEST : ' + pr);
 
               const closePRStatus =   await github.pulls.update({
