@@ -209,3 +209,5 @@ jobs:
                                       pull_number: 2,
                                       state: 'closed'
                                     });
+
+            console.log('Close PR Satus: ' + closePRStatus);
