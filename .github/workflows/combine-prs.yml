@@ -189,37 +189,37 @@ jobs:
       #   run: |
       #     printenv
 
-      - uses: actions/github-script@v3
-        id: close-merged-prs
-        name: Close Merged Pull Requests
-        with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
-          script: |
-            // const closePrs = '2~3~'; // Use this for tests
+      # - uses: actions/github-script@v3
+      #   id: close-merged-prs
+      #   name: Close Merged Pull Requests
+      #   with:
+      #     github-token: ${{secrets.GITHUB_TOKEN}}
+      #     script: |
+      #       // const closePrs = '2~3~'; // Use this for tests
 
-            const closePrs = process.env.CLOSEPRS;
-            console.log('prsToClose: ' + closePrs);
+      #       const closePrs = process.env.CLOSEPRS;
+      #       console.log('prsToClose: ' + closePrs);
 
-            const prArray = closePrs.split("~");
-            prArray.pop(); // Remove the last '~' character
+      #       const prArray = closePrs.split("~");
+      #       prArray.pop(); // Remove the last '~' character
 
-            for(const pr of prArray) {
-              console.log('--------------------------------------------------');
-              console.log('ATTEMPTING TO CLOSE PULL REQUEST : ' + pr);
+      #       for(const pr of prArray) {
+      #         console.log('--------------------------------------------------');
+      #         console.log('ATTEMPTING TO CLOSE PULL REQUEST : ' + pr);
 
-              const closePRStatus =   await github.pulls.update({
-                                      owner: context.repo.owner,
-                                      repo: context.repo.repo,
-                                      pull_number: pr,
-                                      state: 'closed'
-                                    });
+      #         const closePRStatus =   await github.pulls.update({
+      #                                 owner: context.repo.owner,
+      #                                 repo: context.repo.repo,
+      #                                 pull_number: pr,
+      #                                 state: 'closed'
+      #                               });
 
-              // console.log('JSON.stringify: ' + JSON.stringify(closePRStatus));
-              console.log('STATUS CODE: ' + closePRStatus['status']);
+      #         // console.log('JSON.stringify: ' + JSON.stringify(closePRStatus));
+      #         console.log('STATUS CODE: ' + closePRStatus['status']);
 
-              if (closePRStatus['status'] == '200') {
-                console.log('PULL REQUEST ' + pr + ' CLOSED SUCCESSFULLY.');
-              } else {
-                console.log('PULL REQUEST ' + pr + ' COULD NOT BE CLOSED.');
-              }
-            }
+      #         if (closePRStatus['status'] == '200') {
+      #           console.log('PULL REQUEST ' + pr + ' CLOSED SUCCESSFULLY.');
+      #         } else {
+      #           console.log('PULL REQUEST ' + pr + ' COULD NOT BE CLOSED.');
+      #         }
+      #       }
