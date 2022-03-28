@@ -149,7 +149,7 @@ jobs:
             prNos+=${splitArr[0]}"~"
             branchName=${splitArr[1]}
 
-            console.log('--------------------------------------------------');
+            console.log("--------------------------------------------------");
             echo "BRANCH NAME: $branchName\n"
             git pull origin $branchName --no-edit
           done
