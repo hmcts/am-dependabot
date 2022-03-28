@@ -30,134 +30,134 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # - uses: actions/github-script@v3
-      #   id: fetch-branch-names
-      #   name: Fetch branch names
-      #   with:
-      #     github-token: ${{secrets.GITHUB_TOKEN}}
-      #     script: |
-      #       const pulls = await github.paginate('GET /repos/:owner/:repo/pulls', {
-      #         owner: context.repo.owner,
-      #         repo: context.repo.repo,
-      #         state: 'open',
-      #         sort: 'created',
-      #         direction: 'asc'
-      #       });
+      - uses: actions/github-script@v3
+        id: fetch-branch-names
+        name: Fetch branch names
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const pulls = await github.paginate('GET /repos/:owner/:repo/pulls', {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              sort: 'created',
+              direction: 'asc'
+            });
 
-      #       branches = [];
-      #       prs = [];
-      #       base_branch = null;
-      #       for (const pull of pulls) {
-      #         const branch = pull['head']['ref'];
-      #         console.log('PULL FOR BRANCH: ' + branch);
-      #         if (branch.startsWith('${{ github.event.inputs.branchPrefix }}')) {
-      #           console.log('BRANCH MATCHED: ' + branch);
-      #           statusOK = true;
-      #           if(${{ github.event.inputs.mustBeGreen }}) {
-      #             console.log('CHECKING GREEN STATUS: ' + branch);
-      #             const statuses = await github.paginate('GET /repos/{owner}/{repo}/commits/{ref}/status', {
-      #               owner: context.repo.owner,
-      #               repo: context.repo.repo,
-      #               ref: branch
-      #             });
-      #             if(statuses.length > 0) {
-      #               const latest_status = statuses[0]['state'];
-      #               console.log('VALIDATING STATUS: ' + latest_status);
-      #               if(latest_status != 'success') {
-      #                 console.log('DISCARDING ' + branch + ' WITH STATUS ' + latest_status);
-      #                 statusOK = false;
-      #               }
-      #             }
-      #           }
-      #           console.log('CHECKING LABELS: ' + branch);
-      #           const labels = pull['labels'];
-      #           for(const label of labels) {
-      #             const labelName = label['name'];
-      #             console.log('CHECKING LABEL: ' + labelName);
-      #             if(labelName == '${{ github.event.inputs.ignoreLabel }}') {
-      #               console.log('DISCARDING ' + branch + ' WITH LABEL ' + labelName);
-      #               statusOK = false;
-      #             }
-      #           }
-      #           if (statusOK) {
-      #             console.log('ADDING BRANCH TO ARRAY: ' + branch);
-      #             branches.push(pull['number'] + '~' + branch);
-      #             prs.push('#' + pull['number'] + ' ' + pull['title']);
-      #             base_branch = pull['base']['ref'];
-      #           }
-      #         }
-      #       }
+            branches = [];
+            prs = [];
+            base_branch = null;
+            for (const pull of pulls) {
+              const branch = pull['head']['ref'];
+              console.log('PULL FOR BRANCH: ' + branch);
+              if (branch.startsWith('${{ github.event.inputs.branchPrefix }}')) {
+                console.log('BRANCH MATCHED: ' + branch);
+                statusOK = true;
+                if(${{ github.event.inputs.mustBeGreen }}) {
+                  console.log('CHECKING GREEN STATUS: ' + branch);
+                  const statuses = await github.paginate('GET /repos/{owner}/{repo}/commits/{ref}/status', {
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    ref: branch
+                  });
+                  if(statuses.length > 0) {
+                    const latest_status = statuses[0]['state'];
+                    console.log('VALIDATING STATUS: ' + latest_status);
+                    if(latest_status != 'success') {
+                      console.log('DISCARDING ' + branch + ' WITH STATUS ' + latest_status);
+                      statusOK = false;
+                    }
+                  }
+                }
+                console.log('CHECKING LABELS: ' + branch);
+                const labels = pull['labels'];
+                for(const label of labels) {
+                  const labelName = label['name'];
+                  console.log('CHECKING LABEL: ' + labelName);
+                  if(labelName == '${{ github.event.inputs.ignoreLabel }}') {
+                    console.log('DISCARDING ' + branch + ' WITH LABEL ' + labelName);
+                    statusOK = false;
+                  }
+                }
+                if (statusOK) {
+                  console.log('ADDING BRANCH TO ARRAY: ' + branch);
+                  branches.push(pull['number'] + '~' + branch);
+                  prs.push('#' + pull['number'] + ' ' + pull['title']);
+                  base_branch = pull['base']['ref'];
+                }
+              }
+            }
 
-      #       if (branches.length == 0) {
-      #         core.setFailed('No PRs/branches matched criteria');
-      #         return;
-      #       }
+            if (branches.length == 0) {
+              core.setFailed('No PRs/branches matched criteria');
+              return;
+            }
 
-      #       core.setOutput('base-branch', base_branch);
-      #       core.setOutput('prs-string', prs.join('\n'));
+            core.setOutput('base-branch', base_branch);
+            core.setOutput('prs-string', prs.join('\n'));
             
-      #       console.log('Base Branch: ' + base_branch);
-      #       console.log('prs-string: ' + prs.join('\n'));
+            console.log('Base Branch: ' + base_branch);
+            console.log('prs-string: ' + prs.join('\n'));
 
-      #       combined = branches.join(' ')
-      #       console.log('NUMBER OF BRANCHES: ' + branches.length);
-      #       console.log('COMBINED BRANCHES: ' + combined);
+            combined = branches.join(' ')
+            console.log('NUMBER OF BRANCHES: ' + branches.length);
+            console.log('COMBINED BRANCHES: ' + combined);
             
-      #       return combined
+            return combined
 
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      # - uses: actions/checkout@v2.3.3
-      #   with:
-      #     fetch-depth: 0
+      - uses: actions/checkout@v2.3.3
+        with:
+          fetch-depth: 0
 
       # Creates a branch with other PR branches merged together
-      # - name: Created combined branch
-      #   env:
-      #     BASE_BRANCH: ${{ steps.fetch-branch-names.outputs.base-branch }}
-      #     BRANCHES_TO_COMBINE: ${{ steps.fetch-branch-names.outputs.result }}
-      #     COMBINE_BRANCH_NAME: ${{ github.event.inputs.combineBranchName }}
-      #   run: |
-      #     declare -a prNos
+      - name: Created combined branch
+        env:
+          BASE_BRANCH: ${{ steps.fetch-branch-names.outputs.base-branch }}
+          BRANCHES_TO_COMBINE: ${{ steps.fetch-branch-names.outputs.result }}
+          COMBINE_BRANCH_NAME: ${{ github.event.inputs.combineBranchName }}
+        run: |
+          declare -a prNos
 
-      #     sourcebranches="${BRANCHES_TO_COMBINE%\"}"
-      #     sourcebranches="${sourcebranches#\"}"
+          sourcebranches="${BRANCHES_TO_COMBINE%\"}"
+          sourcebranches="${sourcebranches#\"}"
           
-      #     basebranch="${BASE_BRANCH%\"}"
-      #     basebranch="${basebranch#\"}"
+          basebranch="${BASE_BRANCH%\"}"
+          basebranch="${basebranch#\"}"
 
-      #     git config pull.rebase false
-      #     git config user.name github-actions
-      #     git config user.email github-actions@github.com
+          git config pull.rebase false
+          git config user.name github-actions
+          git config user.email github-actions@github.com
           
-      #     combineBranchExists=$(git ls-remote --heads origin ${COMBINE_BRANCH_NAME})
+          combineBranchExists=$(git ls-remote --heads origin ${COMBINE_BRANCH_NAME})
 
-      #     if [[ -z ${combineBranchExists} ]]; then
-      #       echo "COMBINED BRANCH $COMBINE_BRANCH_NAME DOES NOT EXIST. CREATING BRANCH $COMBINE_BRANCH_NAME"
+          if [[ -z ${combineBranchExists} ]]; then
+            echo "COMBINED BRANCH $COMBINE_BRANCH_NAME DOES NOT EXIST. CREATING BRANCH $COMBINE_BRANCH_NAME"
             
-      #       git branch $COMBINE_BRANCH_NAME $basebranch
-      #     else
-      #       echo "COMBINED BRANCH $COMBINE_BRANCH_NAME ALREADY EXISTS"
-      #     fi
+            git branch $COMBINE_BRANCH_NAME $basebranch
+          else
+            echo "COMBINED BRANCH $COMBINE_BRANCH_NAME ALREADY EXISTS"
+          fi
 
-      #     git checkout $COMBINE_BRANCH_NAME
+          git checkout $COMBINE_BRANCH_NAME
 
-      #     branchesArray=($sourcebranches)
-      #     for branch in "${branchesArray[@]}"
-      #     do
-      #       IFS='~' read -ra splitArr <<< "$branch"
+          branchesArray=($sourcebranches)
+          for branch in "${branchesArray[@]}"
+          do
+            IFS='~' read -ra splitArr <<< "$branch"
 
-      #       prNos+=${splitArr[0]}"~"
-      #       branchName=${splitArr[1]}
+            prNos+=${splitArr[0]}"~"
+            branchName=${splitArr[1]}
 
-      #       echo "BRANCH NAME: $branchName\n"
-      #       # git pull origin $branchName --no-edit
-      #     done
+            echo "BRANCH NAME: $branchName\n"
+            # git pull origin $branchName --no-edit
+          done
 
-      #     echo ${prNos[*]}
+          echo ${prNos[*]}
 
-      #     echo "prsToClose=${prNos[*]}" >> $GITHUB_ENV
+          echo "CLOSEPRS=${prNos[*]}" >> $GITHUB_ENV
 
-      #     # git push origin $COMBINE_BRANCH_NAME
+          # git push origin $COMBINE_BRANCH_NAME
 
       # Creates a PR with the new combined branch
       # - uses: actions/github-script@v3
@@ -178,14 +178,14 @@ jobs:
       #         body: body
       #       });
 
-      - name: Created combined branch
-        run: |
-          prNos="Ubuntu;Linux Mint;Debian;Arch;Fedora"
-          echo "prsToClose=${prNos}" >> $GITHUB_ENV
+      # - name: Created combined branch
+      #   run: |
+      #     prNos="Ubuntu;Linux Mint;Debian;Arch;Fedora"
+      #     echo "prsToClose=${prNos}" >> $GITHUB_ENV
 
-      - name: PRINT ENV
-        run: |
-          printenv
+      # - name: PRINT ENV
+      #   run: |
+      #     printenv
 
       - uses: actions/github-script@v3
         id: close-merged-prs
@@ -193,6 +193,6 @@ jobs:
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
-            const closePrs = process.env.prsToClose;
-
+            const closePrs = process.env.CLOSEPRS;
             console.log('prsToClose: ' + closePrs);
+
