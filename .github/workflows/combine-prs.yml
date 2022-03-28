@@ -211,3 +211,5 @@ jobs:
                                     });
 
             console.log('Close PR Satus: ' + closePRStatus);
+            console.log('String: ' + String(closePRStatus));
+            console.log('JSON.stringify: ' + JSON.stringify(closePRStatus));
