@@ -172,7 +172,8 @@ jobs:
             const prString = process.env.PRS_STRING;
             const body = 'This PR was created by the Combine PRs action by combining the following PRs:\n' + prString;
 
-            const response = await github.pulls.create({
+            try {
+              const response = await github.pulls.create({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 title: 'Combined PR',
@@ -181,8 +182,11 @@ jobs:
                 body: body
               });
             
-            if (response.includes('A pull request already exists')) {
-              console.log('A PULL REQUEST ALREADY EXISTS FOR BRANCH ${{ github.event.inputs.combineBranchName }}');
+              if (response.includes('A pull request already exists')) {
+                console.log('A PULL REQUEST ALREADY EXISTS FOR BRANCH ${{ github.event.inputs.combineBranchName }}');
+              }
+            } catch (error) {
+              console.log('ERROR CREATING COMBINED PULL REQUEST: ' + error);
             }
 
       # - name: Created combined branch
