@@ -182,7 +182,7 @@ jobs:
                 body: body
               });
             } catch (error) {
-                if (error.includes('A pull request already exists')) {
+                if (error.message.includes('A pull request already exists')) {
                   console.log('A PULL REQUEST ALREADY EXISTS FOR BRANCH ${{ github.event.inputs.combineBranchName }}');
                 } else {
                   console.log('ERROR CREATING COMBINED PULL REQUEST: ' + error);
