@@ -57,7 +57,7 @@ jobs:
           echo "COMBINE_BRANCH_NAME: $COMBINE_BRANCH_NAME"
           echo "IGNORE_LABEL: $IGNORE_LABEL"
 
-          printenv
+          printenv | sort -f
 
       # - uses: actions/github-script@v3
       #   id: fetch-branch-names
