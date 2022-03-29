@@ -1,8 +1,8 @@
 name: 'Combine PRs'
 
 on:
-  schedule:
-    - cron: '1/5 * * * *'
+  # schedule:
+  #   - cron: '1/5 * * * *'
 
   # Controls when the action will run - in this case triggered manually
   workflow_dispatch:
@@ -45,24 +45,24 @@ jobs:
           echo "COMBINE_BRANCH_NAME=${{ github.event.inputs.combineBranchName || env.DEFAULT_COMBINE_BRANCH_NAME }}" >> $GITHUB_ENV
           echo "IGNORE_LABEL=${{ github.event.inputs.ignoreLabel || env.DEFAULT_IGNORE_LABEL }}" >> $GITHUB_ENV
 
-      - uses: actions/github-script@v3
-        id: test-step
-        name: Test Step
-        with:
-          script: |
-            console.log('BRANCH_PREFIX: ' + process.env.BRANCH_PREFIX);
-            console.log('MUST_BE_GREEN: ' + process.env.MUST_BE_GREEN);
-            console.log('COMBINE_BRANCH_NAME: ' + process.env.COMBINE_BRANCH_NAME);
-            console.log('IGNORE_LABEL: ' + process.env.IGNORE_LABEL);
+      # - uses: actions/github-script@v3
+      #   id: test-step
+      #   name: Test Step
+      #   with:
+      #     script: |
+      #       console.log('BRANCH_PREFIX: ' + process.env.BRANCH_PREFIX);
+      #       console.log('MUST_BE_GREEN: ' + process.env.MUST_BE_GREEN);
+      #       console.log('COMBINE_BRANCH_NAME: ' + process.env.COMBINE_BRANCH_NAME);
+      #       console.log('IGNORE_LABEL: ' + process.env.IGNORE_LABEL);
 
-      - name: Test Bash Step
-        run: |
-          echo "BRANCH_PREFIX: $BRANCH_PREFIX"
-          echo "MUST_BE_GREEN: $MUST_BE_GREEN"
-          echo "COMBINE_BRANCH_NAME: $COMBINE_BRANCH_NAME"
-          echo "IGNORE_LABEL: $IGNORE_LABEL"
+      # - name: Test Bash Step
+      #   run: |
+      #     echo "BRANCH_PREFIX: $BRANCH_PREFIX"
+      #     echo "MUST_BE_GREEN: $MUST_BE_GREEN"
+      #     echo "COMBINE_BRANCH_NAME: $COMBINE_BRANCH_NAME"
+      #     echo "IGNORE_LABEL: $IGNORE_LABEL"
 
-          printenv | sort -f
+      #     printenv | sort -f
 
       - uses: actions/github-script@v3
         id: fetch-branch-names
@@ -216,7 +216,7 @@ jobs:
               const response = await github.pulls.create({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                title: 'Combined PR',
+                title: 'Dependabot Combined PR',
                 head: combineBranchName,
                 base: '${{ steps.fetch-branch-names.outputs.base-branch }}',
                 body: body
@@ -224,48 +224,52 @@ jobs:
 
               console.log('PULL REQUEST SUCCESSFULLY CREATED FOR BRANCH ' + combineBranchName);
 
-              console.log('PR NUMBER: ' + response['data']['number']);
-              console.log('PR URL: ' + response['data']['html_url']);
+              console.log('PULL REQUEST TITLE: Dependabot Combined PR');
+              console.log('PULL REQUEST URL: ' + response['data']['html_url']);
 
             } catch (error) {
                 if (error.message.includes('A pull request already exists')) {
                   console.log('A PULL REQUEST ALREADY EXISTS FOR BRANCH ' + combineBranchName);
                 } else {
-                  console.log('ERROR CREATING COMBINED PULL REQUEST: ' + error);
+                  console.log('ERROR CREATING COMBINED PULL REQUEST: ' + error.message);
                 }
             }
 
-      # - uses: actions/github-script@v3
-      #   id: close-merged-prs
-      #   name: Close Merged Pull Requests
-      #   with:
-      #     github-token: ${{secrets.GITHUB_TOKEN}}
-      #     script: |
-      #       // const closePrs = '2~3~'; // Use this for tests
+      - uses: actions/github-script@v3
+        id: close-merged-prs
+        name: Close Merged Pull Requests
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const closePrs = '2~3~'; // Use this for tests
 
-      #       const closePrs = process.env.CLOSEPRS;
-      #       console.log('prsToClose: ' + closePrs);
+            // const closePrs = process.env.CLOSEPRS;
+            console.log('prsToClose: ' + closePrs);
 
-      #       const prArray = closePrs.split("~");
-      #       prArray.pop(); // Remove the last '~' character
+            const prArray = closePrs.split("~");
+            prArray.pop(); // Remove the last '~' character
 
-      #       for(const pr of prArray) {
-      #         console.log('--------------------------------------------------');
-      #         console.log('ATTEMPTING TO CLOSE PULL REQUEST : ' + pr);
+            for(const pr of prArray) {
+              console.log('--------------------------------------------------');
+              console.log('ATTEMPTING TO CLOSE PULL REQUEST : ' + pr);
 
-      #         const closePRStatus =   await github.pulls.update({
-      #                                 owner: context.repo.owner,
-      #                                 repo: context.repo.repo,
-      #                                 pull_number: pr,
-      #                                 state: 'closed'
-      #                               });
+              try {
+                const closePRStatus = await github.pulls.update({
+                                        owner: context.repo.owner,
+                                        repo: context.repo.repo,
+                                        pull_number: pr,
+                                        state: 'closed'
+                                      });
 
-      #         // console.log('JSON.stringify: ' + JSON.stringify(closePRStatus));
-      #         console.log('STATUS CODE: ' + closePRStatus['status']);
+                // console.log('JSON.stringify: ' + JSON.stringify(closePRStatus));
+                console.log('STATUS CODE: ' + closePRStatus['status']);
 
-      #         if (closePRStatus['status'] == '200') {
-      #           console.log('PULL REQUEST ' + pr + ' CLOSED SUCCESSFULLY.');
-      #         } else {
-      #           console.log('PULL REQUEST ' + pr + ' COULD NOT BE CLOSED.');
-      #         }
-      #       }
+                if (closePRStatus['status'] == '200') {
+                  console.log('PULL REQUEST ' + pr + ' CLOSED SUCCESSFULLY.');
+                } else {
+                  console.log('PULL REQUEST ' + pr + ' COULD NOT BE CLOSED.');
+                }
+              } catch (error) {
+                console.log('PULL REQUEST ' + pr + ' COULD NOT BE CLOSED DUE TO: ' + error.message);
+              }
+            }
