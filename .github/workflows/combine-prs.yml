@@ -146,59 +146,60 @@ jobs:
             
             return combined
 
-      # # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      # - uses: actions/checkout@v2.3.3
-      #   with:
-      #     fetch-depth: 0
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2.3.3
+        name: Checkout
+        with:
+          fetch-depth: 0
 
-      # # Creates a branch with other PR branches merged together
-      # - name: Created combined branch
-      #   env:
-      #     BASE_BRANCH: ${{ steps.fetch-branch-names.outputs.base-branch }}
-      #     BRANCHES_TO_COMBINE: ${{ steps.fetch-branch-names.outputs.result }}
-      #     COMBINE_BRANCH_NAME: ${{ github.event.inputs.combineBranchName }}
-      #   run: |
-      #     declare -a prNos
+      # Creates a branch with other PR branches merged together
+      - name: Created Combined Branch
+        env:
+          BASE_BRANCH: ${{ steps.fetch-branch-names.outputs.base-branch }}
+          BRANCHES_TO_COMBINE: ${{ steps.fetch-branch-names.outputs.result }}
+          # COMBINE_BRANCH_NAME: ${{ github.event.inputs.combineBranchName }}
+        run: |
+          declare -a prNos
 
-      #     sourcebranches="${BRANCHES_TO_COMBINE%\"}"
-      #     sourcebranches="${sourcebranches#\"}"
+          sourcebranches="${BRANCHES_TO_COMBINE%\"}"
+          sourcebranches="${sourcebranches#\"}"
           
-      #     basebranch="${BASE_BRANCH%\"}"
-      #     basebranch="${basebranch#\"}"
+          basebranch="${BASE_BRANCH%\"}"
+          basebranch="${basebranch#\"}"
 
-      #     git config pull.rebase false
-      #     git config user.name github-actions
-      #     git config user.email github-actions@github.com
+          git config pull.rebase false
+          git config user.name github-actions
+          git config user.email github-actions@github.com
           
-      #     combineBranchExists=$(git ls-remote --heads origin ${COMBINE_BRANCH_NAME})
+          combineBranchExists=$(git ls-remote --heads origin ${COMBINE_BRANCH_NAME})
 
-      #     if [[ -z ${combineBranchExists} ]]; then
-      #       echo "COMBINED BRANCH $COMBINE_BRANCH_NAME DOES NOT EXIST. CREATING BRANCH $COMBINE_BRANCH_NAME"
+          if [[ -z ${combineBranchExists} ]]; then
+            echo "COMBINED BRANCH $COMBINE_BRANCH_NAME DOES NOT EXIST. CREATING BRANCH $COMBINE_BRANCH_NAME"
             
-      #       git branch $COMBINE_BRANCH_NAME $basebranch
-      #     else
-      #       echo "COMBINED BRANCH $COMBINE_BRANCH_NAME ALREADY EXISTS"
-      #     fi
+            git branch $COMBINE_BRANCH_NAME $basebranch
+          else
+            echo "COMBINED BRANCH $COMBINE_BRANCH_NAME ALREADY EXISTS"
+          fi
 
-      #     git checkout $COMBINE_BRANCH_NAME
+          git checkout $COMBINE_BRANCH_NAME
 
-      #     branchesArray=($sourcebranches)
-      #     for branch in "${branchesArray[@]}"
-      #     do
-      #       IFS='~' read -ra splitArr <<< "$branch"
+          branchesArray=($sourcebranches)
+          for branch in "${branchesArray[@]}"
+          do
+            IFS='~' read -ra splitArr <<< "$branch"
 
-      #       prNos+=${splitArr[0]}"~"
-      #       branchName=${splitArr[1]}
+            prNos+=${splitArr[0]}"~"
+            branchName=${splitArr[1]}
 
-      #       echo "--------------------------------------------------"
-      #       echo "PR NUMBER: ${splitArr[0]}"
-      #       echo "BRANCH NAME: $branchName\n"
-      #       git pull origin $branchName --no-edit
-      #     done
+            echo "--------------------------------------------------"
+            echo "PR NUMBER: ${splitArr[0]}"
+            echo "BRANCH NAME: $branchName\n"
+            git pull origin $branchName --no-edit
+          done
 
-      #     echo "CLOSEPRS=${prNos[*]}" >> $GITHUB_ENV
+          echo "CLOSEPRS=${prNos[*]}" >> $GITHUB_ENV
 
-      #     git push origin $COMBINE_BRANCH_NAME
+          git push origin $COMBINE_BRANCH_NAME
 
       # # Creates a PR with the new combined branch
       # - uses: actions/github-script@v3
