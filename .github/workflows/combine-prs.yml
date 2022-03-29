@@ -34,7 +34,7 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - name: Assign Environment Variables
-        run:
+        run: |
           echo "BRANCH_PREFIX=${{ github.event.inputs.branchPrefix }}" >> $GITHUB_ENV
           echo "MUST_BE_GREEN=${{ github.event.inputs.mustBeGreen }}" >> $GITHUB_ENV
           echo "COMBINE_BRANCH_NAME=${{ github.event.inputs.combineBranchName }}" >> $GITHUB_ENV
