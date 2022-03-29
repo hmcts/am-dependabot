@@ -1,6 +1,5 @@
 name: 'Combine PRs'
 
-
 on:
   schedule:
     - cron: '1/6 * * * *'
