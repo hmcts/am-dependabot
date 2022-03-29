@@ -64,83 +64,87 @@ jobs:
 
           printenv | sort -f
 
-      # - uses: actions/github-script@v3
-      #   id: fetch-branch-names
-      #   name: Fetch branch names
-      #   with:
-      #     github-token: ${{secrets.GITHUB_TOKEN}}
-      #     script: |
-      #       const pulls = await github.paginate('GET /repos/:owner/:repo/pulls', {
-      #         owner: context.repo.owner,
-      #         repo: context.repo.repo,
-      #         state: 'open',
-      #         sort: 'created',
-      #         direction: 'asc'
-      #       });
+      - uses: actions/github-script@v3
+        id: fetch-branch-names
+        name: Fetch Branch Names
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const branchPrefix = process.env.BRANCH_PREFIX;
+            const ignoreLabel = process.env.IGNORE_LABEL;
+            const mustBeGreen = process.env.MUST_BE_GREEN;
 
-      #       branches = [];
-      #       prs = [];
-      #       base_branch = null;
-      #       for (const pull of pulls) {
-      #         const branch = pull['head']['ref'];
+            const pulls = await github.paginate('GET /repos/:owner/:repo/pulls', {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              sort: 'created',
+              direction: 'asc'
+            });
+
+            branches = [];
+            prs = [];
+            base_branch = null;
+            for (const pull of pulls) {
+              const branch = pull['head']['ref'];
               
-      #         console.log('--------------------------------------------------');
-      #         console.log('PULL FOR BRANCH: ' + branch);
+              console.log('--------------------------------------------------');
+              console.log('PULL FOR BRANCH: ' + branch);
 
-      #         if (branch.startsWith('${{ github.event.inputs.branchPrefix }}')) {
-      #           console.log('BRANCH MATCHED: ' + branch);
-      #           statusOK = true;
-      #           if('${{ github.event.inputs.mustBeGreen }}' == 'true') {
-      #             console.log('CHECKING GREEN STATUS: ' + branch);
-      #             const statuses = await github.paginate('GET /repos/{owner}/{repo}/commits/{ref}/status', {
-      #               owner: context.repo.owner,
-      #               repo: context.repo.repo,
-      #               ref: branch
-      #             });
-      #             if(statuses.length > 0) {
-      #               const latest_status = statuses[0]['state'];
-      #               console.log('VALIDATING STATUS: ' + latest_status);
-      #               if(latest_status != 'success') {
-      #                 console.log('DISCARDING ' + branch + ' WITH STATUS ' + latest_status);
-      #                 statusOK = false;
-      #               }
-      #             }
-      #           }
-      #           console.log('CHECKING LABELS: ' + branch);
-      #           const labels = pull['labels'];
-      #           for(const label of labels) {
-      #             const labelName = label['name'];
-      #             console.log('CHECKING LABEL: ' + labelName);
-      #             if(labelName == '${{ github.event.inputs.ignoreLabel }}') {
-      #               console.log('DISCARDING ' + branch + ' WITH LABEL ' + labelName);
-      #               statusOK = false;
-      #             }
-      #           }
-      #           if (statusOK) {
-      #             console.log('ADDING BRANCH TO ARRAY: ' + branch);
-      #             branches.push(pull['number'] + '~' + branch);
-      #             prs.push('#' + pull['number'] + ' ' + pull['title']);
-      #             base_branch = pull['base']['ref'];
-      #           }
-      #         }
-      #       }
+              if (branch.startsWith(branchPrefix)) {
+                console.log('BRANCH MATCHED: ' + branch);
+                statusOK = true;
+                if(mustBeGreen == 'true') {
+                  console.log('CHECKING GREEN STATUS: ' + branch);
+                  const statuses = await github.paginate('GET /repos/{owner}/{repo}/commits/{ref}/status', {
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    ref: branch
+                  });
+                  if(statuses.length > 0) {
+                    const latest_status = statuses[0]['state'];
+                    console.log('VALIDATING STATUS: ' + latest_status);
+                    if(latest_status != 'success') {
+                      console.log('DISCARDING ' + branch + ' WITH STATUS ' + latest_status);
+                      statusOK = false;
+                    }
+                  }
+                }
+                console.log('CHECKING LABELS: ' + branch);
+                const labels = pull['labels'];
+                for(const label of labels) {
+                  const labelName = label['name'];
+                  console.log('CHECKING LABEL: ' + labelName);
+                  if(labelName == ignoreLabel) {
+                    console.log('DISCARDING ' + branch + ' WITH LABEL ' + labelName);
+                    statusOK = false;
+                  }
+                }
+                if (statusOK) {
+                  console.log('ADDING BRANCH TO ARRAY: ' + branch);
+                  branches.push(pull['number'] + '~' + branch);
+                  prs.push('#' + pull['number'] + ' ' + pull['title']);
+                  base_branch = pull['base']['ref'];
+                }
+              }
+            }
 
-      #       if (branches.length == 0) {
-      #         core.setFailed('No PRs/branches matched criteria');
-      #         return;
-      #       }
+            if (branches.length == 0) {
+              core.setFailed('No PRs/branches matched criteria');
+              return;
+            }
 
-      #       core.setOutput('base-branch', base_branch);
-      #       core.setOutput('prs-string', prs.join('\n'));
+            core.setOutput('base-branch', base_branch);
+            core.setOutput('prs-string', prs.join('\n'));
             
-      #       console.log('Base Branch: ' + base_branch);
-      #       console.log('prs-string: ' + prs.join('\n'));
+            console.log('Base Branch: ' + base_branch);
+            console.log('prs-string: ' + prs.join('\n'));
 
-      #       combined = branches.join(' ')
-      #       console.log('NUMBER OF BRANCHES: ' + branches.length);
-      #       console.log('COMBINED BRANCHES: ' + combined);
+            combined = branches.join(' ')
+            console.log('NUMBER OF BRANCHES: ' + branches.length);
+            console.log('COMBINED BRANCHES: ' + combined);
             
-      #       return combined
+            return combined
 
       # # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       # - uses: actions/checkout@v2.3.3
