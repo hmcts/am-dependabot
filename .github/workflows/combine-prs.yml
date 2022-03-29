@@ -1,8 +1,8 @@
 name: 'Combine PRs'
 
 on:
-  # schedule:
-  #   - cron: '1/6 * * * *'
+  schedule:
+    - cron: '1/5 * * * *'
 
   # Controls when the action will run - in this case triggered manually
   workflow_dispatch:
