@@ -53,7 +53,6 @@ jobs:
             for (const pull of pulls) {
               const branch = pull['head']['ref'];
               
-              console.log('--------------------------------------------------');
               console.log('PULL FOR BRANCH: ' + branch);
 
               if (branch.startsWith('${{ github.event.inputs.branchPrefix }}')) {
