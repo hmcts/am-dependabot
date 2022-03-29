@@ -1,7 +1,11 @@
 name: 'Combine PRs'
 
-# Controls when the action will run - in this case triggered manually
+
 on:
+  schedule:
+    - cron: '1/5 * * * *'
+
+  # Controls when the action will run - in this case triggered manually
   workflow_dispatch:
     inputs:
       branchPrefix:
@@ -11,7 +15,7 @@ on:
       mustBeGreen:
         description: 'Only combine PRs that are green (status is success)'
         required: true
-        default: false
+        default: 'false'
       combineBranchName:
         description: 'Name of the branch to combine PRs into'
         required: true
@@ -155,8 +159,6 @@ jobs:
             git pull origin $branchName --no-edit
           done
 
-          echo ${prNos[*]}
-
           echo "CLOSEPRS=${prNos[*]}" >> $GITHUB_ENV
 
           git push origin $COMBINE_BRANCH_NAME
@@ -188,16 +190,6 @@ jobs:
                   console.log('ERROR CREATING COMBINED PULL REQUEST: ' + error);
                 }
             }
-
-      # - name: Created combined branch
-      #   run: |
-      #     prNos="Ubuntu;Linux Mint;Debian;Arch;Fedora"
-      #     echo "prsToClose=${prNos}" >> $GITHUB_ENV
-
-      # - name: PRINT ENV
-      #   run: |
-      #     printenv
-
       # - uses: actions/github-script@v3
       #   id: close-merged-prs
       #   name: Close Merged Pull Requests
