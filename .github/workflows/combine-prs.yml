@@ -34,11 +34,16 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - name: Assign Environment Variables
+        env:
+          DEFAULT_BRANCH_PREFIX: 'dependabot'
+          DEFAULT_MUST_BE_GREEN: 'false'
+          DEFAULT_COMBINE_BRANCH_NAME: 'combine-prs-branch'
+          DEFAULT_IGNORE_LABEL: 'nocombine'
         run: |
-          echo "BRANCH_PREFIX=${{ github.event.inputs.branchPrefix }}" >> $GITHUB_ENV
-          echo "MUST_BE_GREEN=${{ github.event.inputs.mustBeGreen }}" >> $GITHUB_ENV
-          echo "COMBINE_BRANCH_NAME=${{ github.event.inputs.combineBranchName }}" >> $GITHUB_ENV
-          echo "IGNORE_LABEL=${{ github.event.inputs.ignoreLabel }}" >> $GITHUB_ENV
+          echo "BRANCH_PREFIX=${{ github.event.inputs.branchPrefix || env.DEFAULT_BRANCH_PREFIX }}" >> $GITHUB_ENV
+          echo "MUST_BE_GREEN=${{ github.event.inputs.mustBeGreen || env.DEFAULT_MUST_BE_GREEN }}" >> $GITHUB_ENV
+          echo "COMBINE_BRANCH_NAME=${{ github.event.inputs.combineBranchName || env.DEFAULT_COMBINE_BRANCH_NAME }}" >> $GITHUB_ENV
+          echo "IGNORE_LABEL=${{ github.event.inputs.ignoreLabel || env.DEFAULT_IGNORE_LABEL }}" >> $GITHUB_ENV
 
       - uses: actions/github-script@v3
         id: test-step
