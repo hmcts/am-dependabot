@@ -57,6 +57,8 @@ jobs:
           echo "COMBINE_BRANCH_NAME: $COMBINE_BRANCH_NAME"
           echo "IGNORE_LABEL: $IGNORE_LABEL"
 
+          printenv
+
       # - uses: actions/github-script@v3
       #   id: fetch-branch-names
       #   name: Fetch branch names
