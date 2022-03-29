@@ -224,7 +224,11 @@ jobs:
 
               console.log('PULL REQUEST SUCCESSFULLY CREATED FOR BRANCH ' + combineBranchName);
 
+              console.log('PR NUMBER: ' + response['data']['number']);
+              console.log('PR URL: ' + response['data']['html_url']);
+
               console.log(response);
+
             } catch (error) {
                 if (error.message.includes('A pull request already exists')) {
                   console.log('A PULL REQUEST ALREADY EXISTS FOR BRANCH ' + combineBranchName);
