@@ -199,6 +199,7 @@ jobs:
             if [[ "$mergeError" == "true" ]]; then
               echo "GIT PULL FAILED. ABORTING MERGE."
               git merge --abort
+              mergeError=false
             fi
 
           done
