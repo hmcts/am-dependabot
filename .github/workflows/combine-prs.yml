@@ -165,6 +165,8 @@ jobs:
           sourcebranches="${BRANCHES_TO_COMBINE%\"}"
           sourcebranches="${sourcebranches#\"}"
           
+          echo "SOURCE BRANCHES: $sourcebranches"
+
           basebranch="${BASE_BRANCH%\"}"
           basebranch="${basebranch#\"}"
 
@@ -185,7 +187,7 @@ jobs:
           git checkout $COMBINE_BRANCH_NAME
 
           branchesArray=($sourcebranches)
-          echo $branchesArray
+          echo "BRANCHES ARRAY: $branchesArray[@]"
           for branch in "${branchesArray[@]}"
           do
             mergeError=false
