@@ -262,36 +262,12 @@ jobs:
             let createAutoMergeLabel = false;
             let autoMergeConflictLabelExists = false;
 
-            /*
-            try {
-              const labels = await github.issues.listLabelsForRepo({
-                              owner: context.repo.owner,
-                              repo: context.repo.repo
-                             });
-
-              console.log('EXISTING LABELS: ' + JSON.stringify(labels));
-
-              for (const label of labels['data']) {
-                if (label['name'] == autoMergeConflictLabel) {
-                  createAutoMergeLabel = false;
-                  autoMergeConflictLabelExists = true;
-                  break;
-                }
-              }
-            } catch (listLabelError) {
-              createAutoMergeLabel = false;
-              console.log('FAILED TO FETCH LABELS DUE TO ' + listLabelError.message);
-            }
-            */
-
             try {
               const label = await github.issues.getLabel({
                               owner: context.repo.owner,
                               repo: context.repo.repo,
                               name: autoMergeConflictLabel
                             });
-
-              console.log('LABEL: ' + JSON.stringify(label));
 
               if (label['status'] != '200') {
                 createAutoMergeLabel = true;
@@ -300,7 +276,7 @@ jobs:
                 console.log('LABEL ' + autoMergeConflictLabel + ' EXISTS');
               }
             } catch(getLabelError) {
-              if (getLabelError.status = 404) {
+              if (getLabelError.status == 404) {
                 createAutoMergeLabel = true;
 
                 console.log('FAILED TO GET LABEL ' + autoMergeConflictLabel + ' DUE TO ' + getLabelError.message);
