@@ -122,7 +122,7 @@ jobs:
                 }
                 if (statusOK) {
                   console.log('ADDING BRANCH TO ARRAY: ' + branch);
-                  branches.push(pull['number'] + '~' + branch + '~' + '\'' + pull['title'] + '\'');
+                  branches.push('"' + pull['number'] + '~' + branch + '~' + pull['title'] + '"');
                   // prs.push('#' + pull['number'] + ' ' + pull['title']);
                   base_branch = pull['base']['ref'];
                 }
