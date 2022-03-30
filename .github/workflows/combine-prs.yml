@@ -299,6 +299,7 @@ jobs:
                 console.log('LABEL ' + autoMergeConflictLabel + ' EXISTS');
               }
             } catch(getLabelError) {
+              console.log(getLabelError);
               console.log('FAILED TO GET LABEL ' + autoMergeConflictLabel + ' DUE TO ' + getLabelError.message);
             }
 
