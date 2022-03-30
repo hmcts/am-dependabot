@@ -258,9 +258,9 @@ jobs:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
             const mergeConlictPrs = process.env.MERGECONFLICTPRS;
-            const createAutoMergeLabel = true;
-            const autoMergeConflictLabelExists = false;
             const autoMergeConflictLabel = 'automergeconflict';
+            let createAutoMergeLabel = true;
+            let autoMergeConflictLabelExists = false;
 
             try {
               const labels = await github.issues.listLabelsForRepo({
