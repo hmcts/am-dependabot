@@ -262,25 +262,27 @@ jobs:
             let createAutoMergeLabel = false;
             let autoMergeConflictLabelExists = false;
 
-            # try {
-            #   const labels = await github.issues.listLabelsForRepo({
-            #                   owner: context.repo.owner,
-            #                   repo: context.repo.repo
-            #                  });
+            /*
+            try {
+              const labels = await github.issues.listLabelsForRepo({
+                              owner: context.repo.owner,
+                              repo: context.repo.repo
+                             });
 
-            #   console.log('EXISTING LABELS: ' + JSON.stringify(labels));
+              console.log('EXISTING LABELS: ' + JSON.stringify(labels));
 
-            #   for (const label of labels['data']) {
-            #     if (label['name'] == autoMergeConflictLabel) {
-            #       createAutoMergeLabel = false;
-            #       autoMergeConflictLabelExists = true;
-            #       break;
-            #     }
-            #   }
-            # } catch (listLabelError) {
-            #   createAutoMergeLabel = false;
-            #   console.log('FAILED TO FETCH LABELS DUE TO ' + listLabelError.message);
-            # }
+              for (const label of labels['data']) {
+                if (label['name'] == autoMergeConflictLabel) {
+                  createAutoMergeLabel = false;
+                  autoMergeConflictLabelExists = true;
+                  break;
+                }
+              }
+            } catch (listLabelError) {
+              createAutoMergeLabel = false;
+              console.log('FAILED TO FETCH LABELS DUE TO ' + listLabelError.message);
+            }
+            */
 
             try {
               const label = await github.issues.getLabel({
@@ -289,6 +291,8 @@ jobs:
                               name: autoMergeConflictLabel
                             });
 
+              console.log('LABEL: ' + JSON.stringify(label));
+              
               if (label['status'] != '200') {
                 createAutoMergeLabel = true;
               } else {
