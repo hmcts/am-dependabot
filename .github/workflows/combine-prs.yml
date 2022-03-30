@@ -162,6 +162,8 @@ jobs:
           declare -a prString
           declare -a conflictPrNos
 
+          echo "BRANCHES TO COMBINE: $BRANCHES_TO_COMBINE"
+
           sourcebranches="${BRANCHES_TO_COMBINE%\"}"
           sourcebranches="${sourcebranches#\"}"
           
