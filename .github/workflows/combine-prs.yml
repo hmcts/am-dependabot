@@ -270,8 +270,8 @@ jobs:
 
               console.log('EXISTING LABELS: ' + JSON.stringify(labels));
 
-              for (const label of labels) {
-                if (label == autoMergeConflictLabel) {
+              for (const label of labels['data']) {
+                if (label['name'] == autoMergeConflictLabel) {
                   createAutoMergeLabel = false;
                   autoMergeConflictLabelExists = true;
                   break;
