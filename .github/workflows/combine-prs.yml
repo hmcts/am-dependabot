@@ -268,7 +268,7 @@ jobs:
                               repo: context.repo.repo
                              });
 
-              console.log('EXISTING LABELS: ' + labels);
+              console.log('EXISTING LABELS: ' + JSON.stringify(labels));
 
               for (const label of labels) {
                 if (label == autoMergeConflictLabel) {
