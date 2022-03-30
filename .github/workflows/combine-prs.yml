@@ -296,6 +296,7 @@ jobs:
               if (label['status'] != '200') {
                 createAutoMergeLabel = true;
               } else {
+                autoMergeConflictLabelExists = true;
                 console.log('LABEL ' + autoMergeConflictLabel + ' EXISTS');
               }
             } catch(getLabelError) {
