@@ -190,7 +190,8 @@ jobs:
 
           branchesArray=($sourcebranches)
           echo "BRANCHES ARRAY: $branchesArray
-          for branch in "${branchesArray[@]}"
+          //for branch in "${branchesArray[@]}"
+          for branch in "${#sourcebranches[@]}"
           do
             mergeError=false
             
