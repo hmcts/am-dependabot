@@ -185,6 +185,7 @@ jobs:
           git checkout $COMBINE_BRANCH_NAME
 
           branchesArray=($sourcebranches)
+          echo $branchesArray
           for branch in "${branchesArray[@]}"
           do
             mergeError=false
