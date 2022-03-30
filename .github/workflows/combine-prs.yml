@@ -165,7 +165,7 @@ jobs:
           echo "BRANCHES TO COMBINE: $BRANCHES_TO_COMBINE"
 
           sourcebranches="${BRANCHES_TO_COMBINE%\"}"
-          sourcebranches="${sourcebranches#\"}"
+          # sourcebranches="${sourcebranches#\"}"
           
           echo "SOURCE BRANCHES: $sourcebranches"
 
