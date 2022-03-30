@@ -292,15 +292,18 @@ jobs:
                             });
 
               console.log('LABEL: ' + JSON.stringify(label));
-              
+
               if (label['status'] != '200') {
                 createAutoMergeLabel = true;
               } else {
                 console.log('LABEL ' + autoMergeConflictLabel + ' EXISTS');
               }
             } catch(getLabelError) {
-              console.log(getLabelError.status);
-              console.log('FAILED TO GET LABEL ' + autoMergeConflictLabel + ' DUE TO ' + getLabelError.message);
+              if (getLabelError.status = 404) {
+                createAutoMergeLabel = true;
+
+                console.log('FAILED TO GET LABEL ' + autoMergeConflictLabel + ' DUE TO ' + getLabelError.message);
+              }
             }
 
             if (createAutoMergeLabel == true) {
