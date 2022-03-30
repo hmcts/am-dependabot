@@ -288,7 +288,7 @@ jobs:
                                   owner: context.repo.owner,
                                   repo: context.repo.repo,
                                   name: autoMergeConflictLabel,
-                                  color: '#B60205'
+                                  color: '#B60205',
                                   description: 'Auto merge conlict'
                                  });
 
