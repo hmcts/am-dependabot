@@ -187,7 +187,6 @@ jobs:
           do
             IFS='~' read -ra splitArr <<< "$branch"
 
-            prNos+=${splitArr[0]}"~"
             branchName=${splitArr[1]}
 
             echo "--------------------------------------------------"
@@ -197,13 +196,17 @@ jobs:
             git pull origin $branchName --no-edit || mergeError=true
 
             if [[ "$mergeError" == "true" ]]; then
-              echo "GIT PULL FAILED. ABORTING MERGE."
               git merge --abort
+              echo "ABORTED GIT MERGE DUE TO FAILURE"
+
               mergeError=false
+            else
+              prNos+=${splitArr[0]}"~"
             fi
 
           done
 
+          echo $prNos[*]
           echo "CLOSEPRS=${prNos[*]}" >> $GITHUB_ENV
 
           # git push origin $COMBINE_BRANCH_NAME
