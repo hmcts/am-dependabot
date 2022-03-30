@@ -259,30 +259,44 @@ jobs:
           script: |
             const mergeConlictPrs = process.env.MERGECONFLICTPRS;
             const autoMergeConflictLabel = 'automergeconflict';
-            let createAutoMergeLabel = true;
+            let createAutoMergeLabel = false;
             let autoMergeConflictLabelExists = false;
 
+            # try {
+            #   const labels = await github.issues.listLabelsForRepo({
+            #                   owner: context.repo.owner,
+            #                   repo: context.repo.repo
+            #                  });
+
+            #   console.log('EXISTING LABELS: ' + JSON.stringify(labels));
+
+            #   for (const label of labels['data']) {
+            #     if (label['name'] == autoMergeConflictLabel) {
+            #       createAutoMergeLabel = false;
+            #       autoMergeConflictLabelExists = true;
+            #       break;
+            #     }
+            #   }
+            # } catch (listLabelError) {
+            #   createAutoMergeLabel = false;
+            #   console.log('FAILED TO FETCH LABELS DUE TO ' + listLabelError.message);
+            # }
+
             try {
-              const labels = await github.issues.listLabelsForRepo({
+              const label = await github.issues.getLabel({
                               owner: context.repo.owner,
-                              repo: context.repo.repo
-                             });
+                              repo: context.repo.repo,
+                              name: autoMergeConflictLabel
+                            });
 
-              console.log('EXISTING LABELS: ' + JSON.stringify(labels));
-
-              for (const label of labels['data']) {
-                if (label['name'] == autoMergeConflictLabel) {
-                  createAutoMergeLabel = false;
-                  autoMergeConflictLabelExists = true;
-                  break;
-                }
+              if (label['status'] != '200') {
+                createAutoMergeLabel = true;
+              } else {
+                console.log('LABEL ' + autoMergeConflictLabel + ' EXISTS');
               }
-            } catch (listLabelError) {
-              createAutoMergeLabel = false;
-              console.log('FAILED TO FETCH LABELS DUE TO ' + listLabelError.message);
+            } catch(getLabelError) {
+              console.log('FAILED TO GET LABEL ' + autoMergeConflictLabel + ' DUE TO ' + getLabelError.message);
             }
-
-            createAutoMergeLabel = true;
 
             if (createAutoMergeLabel == true) {
               console.log('CREATING LABEL ' + autoMergeConflictLabel);
