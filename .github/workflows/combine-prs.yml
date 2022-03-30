@@ -282,6 +282,8 @@ jobs:
               console.log('FAILED TO FETCH LABELS DUE TO ' + listLabelError.message);
             }
 
+            createAutoMergeLabel = true;
+
             if (createAutoMergeLabel == true) {
               console.log('CREATING LABEL ' + autoMergeConflictLabel);
 
