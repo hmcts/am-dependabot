@@ -159,6 +159,7 @@ jobs:
           BRANCHES_TO_COMBINE: ${{ steps.fetch-branch-names.outputs.result }}
         run: |
           declare -a prNos
+          declare -a errorPrNos
 
           sourcebranches="${BRANCHES_TO_COMBINE%\"}"
           sourcebranches="${sourcebranches#\"}"
@@ -200,50 +201,54 @@ jobs:
               echo "ABORTED GIT MERGE DUE TO FAILURE"
 
               mergeError=false
+              errorPrNos+=${splitArr[0]}"~"
             else
               prNos+=${splitArr[0]}"~"
             fi
 
           done
 
+          echo "MERGE ERROR PRs: $errorPrNos"
+          echo "SUCCESSFUL PRs: $prNos"
+
           echo "CLOSEPRS=${prNos[*]}" >> $GITHUB_ENV
 
-          git push origin $COMBINE_BRANCH_NAME
+          # git push origin $COMBINE_BRANCH_NAME
 
       # Creates a PR with the new combined branch
-      - uses: actions/github-script@v3
-        name: Create Combined Pull Request
-        env:
-          PRS_STRING: ${{ steps.fetch-branch-names.outputs.prs-string }}
-        with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
-          script: |
-            const combineBranchName = process.env.COMBINE_BRANCH_NAME;
-            const prString = process.env.PRS_STRING;
-            const body = 'This PR was created by the Combine PRs action by combining the following PRs:\n' + prString;
+      # - uses: actions/github-script@v3
+      #   name: Create Combined Pull Request
+      #   env:
+      #     PRS_STRING: ${{ steps.fetch-branch-names.outputs.prs-string }}
+      #   with:
+      #     github-token: ${{secrets.GITHUB_TOKEN}}
+      #     script: |
+      #       const combineBranchName = process.env.COMBINE_BRANCH_NAME;
+      #       const prString = process.env.PRS_STRING;
+      #       const body = 'This PR was created by the Combine PRs action by combining the following PRs:\n' + prString;
 
-            try {
-              const response = await github.pulls.create({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                title: 'Dependabot Combined PR',
-                head: combineBranchName,
-                base: '${{ steps.fetch-branch-names.outputs.base-branch }}',
-                body: body
-              });
+      #       try {
+      #         const response = await github.pulls.create({
+      #           owner: context.repo.owner,
+      #           repo: context.repo.repo,
+      #           title: 'Dependabot Combined PR',
+      #           head: combineBranchName,
+      #           base: '${{ steps.fetch-branch-names.outputs.base-branch }}',
+      #           body: body
+      #         });
 
-              console.log('PULL REQUEST SUCCESSFULLY CREATED FOR BRANCH ' + combineBranchName);
+      #         console.log('PULL REQUEST SUCCESSFULLY CREATED FOR BRANCH ' + combineBranchName);
 
-              console.log('PULL REQUEST TITLE: Dependabot Combined PR');
-              console.log('PULL REQUEST URL: ' + response['data']['html_url']);
+      #         console.log('PULL REQUEST TITLE: Dependabot Combined PR');
+      #         console.log('PULL REQUEST URL: ' + response['data']['html_url']);
 
-            } catch (error) {
-                if (error.message.includes('A pull request already exists')) {
-                  console.log('A PULL REQUEST ALREADY EXISTS FOR BRANCH ' + combineBranchName);
-                } else {
-                  console.log('ERROR CREATING COMBINED PULL REQUEST: ' + error.message);
-                }
-            }
+      #       } catch (error) {
+      #           if (error.message.includes('A pull request already exists')) {
+      #             console.log('A PULL REQUEST ALREADY EXISTS FOR BRANCH ' + combineBranchName);
+      #           } else {
+      #             console.log('ERROR CREATING COMBINED PULL REQUEST: ' + error.message);
+      #           }
+      #       }
 
       # - uses: actions/github-script@v3
       #   id: close-merged-prs
