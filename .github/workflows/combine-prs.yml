@@ -206,10 +206,9 @@ jobs:
 
           done
 
-          echo $prNos[*]
           echo "CLOSEPRS=${prNos[*]}" >> $GITHUB_ENV
 
-          # git push origin $COMBINE_BRANCH_NAME
+          git push origin $COMBINE_BRANCH_NAME
 
       # Creates a PR with the new combined branch
       - uses: actions/github-script@v3
