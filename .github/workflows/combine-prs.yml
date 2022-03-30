@@ -208,8 +208,10 @@ jobs:
 
           done
 
+          echo "--------------------------------------------------"
           echo "MERGE CONFLICT PRs: $conflictPrNos"
           echo "SUCCESSFUL PRs: $prNos"
+          echo "--------------------------------------------------"
 
           echo "CLOSEPRS=${prNos[*]}" >> $GITHUB_ENV
           echo "MERGECONFLICTPRS=${conflictPrNos[*]}" >> $GITHUB_ENV
