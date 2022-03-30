@@ -188,6 +188,8 @@ jobs:
           for branch in "${branchesArray[@]}"
           do
             mergeError=false
+            
+            echo $branch
 
             IFS='~' read -ra splitArr <<< "$branch"
 
@@ -195,19 +197,21 @@ jobs:
 
             echo "--------------------------------------------------"
             echo "PR NUMBER: ${splitArr[0]}"
-            echo "BRANCH NAME: $branchName"
+            # echo "BRANCH NAME: $branchName"
+            echo "BRANCH NAME: ${splitArr[1]}"
+            echo "PR TITLE: ${splitArr[2]}"
 
-            git pull origin $branchName --no-edit || mergeError=true
+            # git pull origin $branchName --no-edit || mergeError=true
 
-            if [[ "$mergeError" == "true" ]]; then
-              git merge --abort
-              echo "ABORTED GIT MERGE DUE TO FAILURE"
+            # if [[ "$mergeError" == "true" ]]; then
+            #   git merge --abort
+            #   echo "ABORTED GIT MERGE DUE TO FAILURE"
 
-              conflictPrNos+=${splitArr[0]}"~"
-            else
-              prNos+=${splitArr[0]}"~"
-              prString+="#${splitArr[0]} ${splitArr[2]}~"
-            fi
+            #   conflictPrNos+=${splitArr[0]}"~"
+            # else
+            #   prNos+=${splitArr[0]}"~"
+            #   prString+="#${splitArr[0]} ${splitArr[2]}~"
+            # fi
 
           done
 
@@ -221,13 +225,12 @@ jobs:
           echo "PRSTRING=${prString[*]}" >> $GITHUB_ENV
           echo "MERGECONFLICTPRS=${conflictPrNos[*]}" >> $GITHUB_ENV
 
-          git push origin $COMBINE_BRANCH_NAME
+          # git push origin $COMBINE_BRANCH_NAME
 
       # Creates a PR with the new combined branch
       - uses: actions/github-script@v3
+        if: ${{ false }}
         name: Create Combined Pull Request
-        # env:
-        #   PRS_STRING: ${{ steps.fetch-branch-names.outputs.prs-string }}
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
@@ -259,6 +262,7 @@ jobs:
             }
 
       - uses: actions/github-script@v3
+        if: ${{ false }}
         id: label-conflict-prs
         name: Add Label To Merge Conflict Pull Requests
         with:
