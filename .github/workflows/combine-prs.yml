@@ -194,9 +194,9 @@ jobs:
             echo "PR NUMBER: ${splitArr[0]}"
             echo "BRANCH NAME: $branchName"
 
-            mergeOutput="$(git pull origin $branchName --no-edit)"
+            git pull origin $branchName --no-edit || mergeError=true
 
-            if [[ "$mergeOutput" == *"conflict"* ]]; then
+            if [[ "$mergeError" == "true" ]]; then
               echo "GIT PULL FAILED. ABORTING MERGE."
               git merge --abort
             fi
