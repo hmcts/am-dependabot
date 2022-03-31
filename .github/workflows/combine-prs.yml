@@ -116,17 +116,15 @@ jobs:
               return;
             }
 
+            combined = branches.join(' ');
+
             core.setOutput('base-branch', base_branch);
-            // core.setOutput('prs-string', prs.join('\n'));
             core.setOutput('prs-string', prs.join('||'));
             
-            console.log('Base Branch: ' + base_branch);
-            // console.log('prs-string: ' + prs.join('\n'));
-            console.log('prs-string: ' + prs.join(' '));
-            console.log('NUMBER OF BRANCHES: ' + branches.length);
-            console.log('COMBINED BRANCHES: ' + branches.join('\n'));
-
-            combined = branches.join(' ');
+            console.log('--------------------------------------------------');
+            console.log('BASE BRANCH: ' + base_branch);
+            console.log('NUMBER OF IDENTIFIED BRANCHES: ' + branches.length);
+            console.log('IDENTIFIED BRANCHES: ' + combined);
 
             return combined;
 
@@ -219,15 +217,12 @@ jobs:
             const combineBranchName = process.env.COMBINE_BRANCH_NAME;
             const prString = process.env.PRS_STRING;
 
-            console.log('PRS String: ' + prString);
             prStringArr = prString.split("||");
-            
+
             const closePRArray = closePrs.split("~");
             closePRArray.pop(); // Remove the last '~' character
 
             for(const prStr of prStringArr) {
-              console.log("EACH PR: " + prStr);
-
               tempArr = prStr.split("~");
 
               if (closePRArray.includes(tempArr[0])) {
@@ -235,10 +230,8 @@ jobs:
               }
             }
 
-            console.log('prs-string: ' + prs.join('\n'));
-            // const body = 'This PR was created by the Combine PRs action by combining the following PRs:\n' + prs.join('\n');
+            const body = 'This PR was created by the Combine PRs action by combining the following PRs:\n' + prs.join('\n');
 
-            /*
             try {
               const response = await github.pulls.create({
                 owner: context.repo.owner,
@@ -261,10 +254,9 @@ jobs:
                   console.log('ERROR CREATING COMBINED PULL REQUEST: ' + error.message);
                 }
             }
-            */
 
       - uses: actions/github-script@v3
-        if: ${{ false }}
+        # if: ${{ false }}
         id: label-conflict-prs
         name: Add Label To Merge Conflict Pull Requests
         with:
@@ -348,41 +340,42 @@ jobs:
               }
             }
 
-      # - uses: actions/github-script@v3
-      #   id: close-merged-prs
-      #   name: Close Merged Pull Requests
-      #   with:
-      #     github-token: ${{secrets.GITHUB_TOKEN}}
-      #     script: |
-      #       const closePrs = '2~3~'; // Use this for tests
+      - uses: actions/github-script@v3
+        if: ${{ false }}
+        id: close-merged-prs
+        name: Close Merged Pull Requests
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const closePrs = '2~3~'; // Use this for tests
 
-      #       // const closePrs = process.env.CLOSEPRS;
-      #       console.log('prsToClose: ' + closePrs);
+            // const closePrs = process.env.CLOSEPRS;
+            console.log('prsToClose: ' + closePrs);
 
-      #       const prArray = closePrs.split("~");
-      #       prArray.pop(); // Remove the last '~' character
+            const prArray = closePrs.split("~");
+            prArray.pop(); // Remove the last '~' character
 
-      #       for(const pr of prArray) {
-      #         console.log('--------------------------------------------------');
-      #         console.log('ATTEMPTING TO CLOSE PULL REQUEST : ' + pr);
+            for(const pr of prArray) {
+              console.log('--------------------------------------------------');
+              console.log('ATTEMPTING TO CLOSE PULL REQUEST : ' + pr);
 
-      #         try {
-      #           const closePRStatus = await github.pulls.update({
-      #                                   owner: context.repo.owner,
-      #                                   repo: context.repo.repo,
-      #                                   pull_number: pr,
-      #                                   state: 'closed'
-      #                                 });
+              try {
+                const closePRStatus = await github.pulls.update({
+                                        owner: context.repo.owner,
+                                        repo: context.repo.repo,
+                                        pull_number: pr,
+                                        state: 'closed'
+                                      });
 
-      #           // console.log('JSON.stringify: ' + JSON.stringify(closePRStatus));
-      #           console.log('STATUS CODE: ' + closePRStatus['status']);
+                // console.log('JSON.stringify: ' + JSON.stringify(closePRStatus));
+                console.log('STATUS CODE: ' + closePRStatus['status']);
 
-      #           if (closePRStatus['status'] == '200') {
-      #             console.log('PULL REQUEST ' + pr + ' CLOSED SUCCESSFULLY.');
-      #           } else {
-      #             console.log('PULL REQUEST ' + pr + ' COULD NOT BE CLOSED.');
-      #           }
-      #         } catch (error) {
-      #           console.log('PULL REQUEST ' + pr + ' COULD NOT BE CLOSED DUE TO: ' + error.message);
-      #         }
-      #       }
+                if (closePRStatus['status'] == '200') {
+                  console.log('PULL REQUEST ' + pr + ' CLOSED SUCCESSFULLY.');
+                } else {
+                  console.log('PULL REQUEST ' + pr + ' COULD NOT BE CLOSED.');
+                }
+              } catch (error) {
+                console.log('PULL REQUEST ' + pr + ' COULD NOT BE CLOSED DUE TO: ' + error.message);
+              }
+            }
