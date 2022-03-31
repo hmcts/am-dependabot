@@ -214,10 +214,28 @@ jobs:
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
+            prs = [];
+            const closePrs = process.env.CLOSEPRS;
             const combineBranchName = process.env.COMBINE_BRANCH_NAME;
             const prString = process.env.PRS_STRING;
-            const body = 'This PR was created by the Combine PRs action by combining the following PRs:\n' + prString;
 
+            prStringArr = prString.split(" ");
+            
+            const closePRArray = closePrs.split("~");
+            closePRArray.pop(); // Remove the last '~' character
+
+            for(const prStr of prStringArr) {
+              tempArr = prStr.split("~");
+
+              if (closePRArray.includes(tempArr[0])) {
+                prs.push('#' + tempArr[0] + ' ' + tempArr[1]);
+              }
+            }
+
+            console.log('prs-string: ' + prs.join('\n'));
+            // const body = 'This PR was created by the Combine PRs action by combining the following PRs:\n' + prs.join('\n');
+
+            /*
             try {
               const response = await github.pulls.create({
                 owner: context.repo.owner,
@@ -240,9 +258,10 @@ jobs:
                   console.log('ERROR CREATING COMBINED PULL REQUEST: ' + error.message);
                 }
             }
+            */
 
       - uses: actions/github-script@v3
-        # if: ${{ false }}
+        if: ${{ false }}
         id: label-conflict-prs
         name: Add Label To Merge Conflict Pull Requests
         with:
