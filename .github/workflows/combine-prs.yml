@@ -104,7 +104,8 @@ jobs:
                 if (statusOK) {
                   console.log('ADDING BRANCH TO ARRAY: ' + branch);
                   branches.push(pull['number'] + '~' + branch);
-                  prs.push('#' + pull['number'] + ' ' + pull['title']);
+                  // prs.push('#' + pull['number'] + ' ' + pull['title']);
+                  prs.push(pull['number'] + '~' + pull['title']);
                   base_branch = pull['base']['ref'];
                 }
               }
@@ -116,10 +117,12 @@ jobs:
             }
 
             core.setOutput('base-branch', base_branch);
-            core.setOutput('prs-string', prs.join('\n'));
+            // core.setOutput('prs-string', prs.join('\n'));
+            core.setOutput('prs-string', prs.join(' '));
             
             console.log('Base Branch: ' + base_branch);
-            console.log('prs-string: ' + prs.join('\n'));
+            // console.log('prs-string: ' + prs.join('\n'));
+            console.log('prs-string: ' + prs.join(' '));
             console.log('NUMBER OF BRANCHES: ' + branches.length);
             console.log('COMBINED BRANCHES: ' + branches.join('\n'));
 
