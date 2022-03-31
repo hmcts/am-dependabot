@@ -212,7 +212,7 @@ jobs:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
             const combineBranchName = process.env.COMBINE_BRANCH_NAME;
-            const prString = process.env.PR_STRING;
+            const prString = process.env.PRS_STRING;
             const body = 'This PR was created by the Combine PRs action by combining the following PRs:\n' + prString;
 
             try {
