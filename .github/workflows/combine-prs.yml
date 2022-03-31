@@ -118,7 +118,7 @@ jobs:
 
             core.setOutput('base-branch', base_branch);
             // core.setOutput('prs-string', prs.join('\n'));
-            core.setOutput('prs-string', prs.join(' '));
+            core.setOutput('prs-string', prs.join('||'));
             
             console.log('Base Branch: ' + base_branch);
             // console.log('prs-string: ' + prs.join('\n'));
@@ -220,14 +220,14 @@ jobs:
             const prString = process.env.PRS_STRING;
 
             console.log('PRS String: ' + prString);
-            prStringArr = prString.split(" ");
+            prStringArr = prString.split("||");
             
             const closePRArray = closePrs.split("~");
             closePRArray.pop(); // Remove the last '~' character
 
             for(const prStr of prStringArr) {
               console.log("EACH PR: " + prStr);
-              
+
               tempArr = prStr.split("~");
 
               if (closePRArray.includes(tempArr[0])) {
