@@ -219,12 +219,15 @@ jobs:
             const combineBranchName = process.env.COMBINE_BRANCH_NAME;
             const prString = process.env.PRS_STRING;
 
+            console.log('PRS String: ' + prString);
             prStringArr = prString.split(" ");
             
             const closePRArray = closePrs.split("~");
             closePRArray.pop(); // Remove the last '~' character
 
             for(const prStr of prStringArr) {
+              console.log("EACH PR: " + prStr);
+              
               tempArr = prStr.split("~");
 
               if (closePRArray.includes(tempArr[0])) {
