@@ -204,7 +204,7 @@ jobs:
 
       # Creates a PR with the new combined branch
       - uses: actions/github-script@v3
-        if: ${{ false }}
+        # if: ${{ false }}
         name: Create Combined Pull Request
         env:
           PRS_STRING: ${{ steps.fetch-branch-names.outputs.prs-string }}
@@ -239,7 +239,7 @@ jobs:
             }
 
       - uses: actions/github-script@v3
-        if: ${{ false }}
+        # if: ${{ false }}
         id: label-conflict-prs
         name: Add Label To Merge Conflict Pull Requests
         with:
