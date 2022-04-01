@@ -345,9 +345,9 @@ jobs:
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
-            const closePrs = '2~3~'; // Use this for tests
+            // const closePrs = '2~3~'; // Use this for tests
 
-            // const closePrs = process.env.CLOSEPRS;
+            const closePrs = process.env.CLOSEPRS;
             console.log('prsToClose: ' + closePrs);
 
             const prArray = closePrs.split("~");
