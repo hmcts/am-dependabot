@@ -339,7 +339,7 @@ jobs:
             }
 
       - uses: actions/github-script@v3
-        if: ${{ false }}
+        # if: ${{ false }}
         id: close-merged-prs
         name: Close Merged Pull Requests
         with:
