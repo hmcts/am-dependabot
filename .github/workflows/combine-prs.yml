@@ -14,7 +14,7 @@ jobs:
       - uses: hmcts/am-github-actions/combine-prs@master
         with:
           branchPrefix: "dependabot"
-          mustBeGreen: "true"
+          mustBeGreen: "false"
           combineBranchName: "combine-prs-branch"
           ignoreLabel: "nocombine"
           closeCombinedPrs: "true"
