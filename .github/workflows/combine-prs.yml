@@ -19,5 +19,5 @@ jobs:
           combineBranchName: "combine-prs-branch"
           ignoreLabel: "nocombine"
           combinePullRequestTitle: "Dependabot Combined Pull Request"
-          closeCombinedPrs: "false"
+          closeCombinedPrs: "true"
           githubToken: "${{ secrets.GITHUB_TOKEN }}"
