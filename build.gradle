@@ -195,7 +195,7 @@ dependencies {
   implementation(group: 'org.springframework.boot', name: 'spring-boot-starter-json', version: versions.springBoot)
   implementation group: 'org.springframework.security', name: 'spring-security-core', version: '5.6.2'
   implementation 'com.github.hmcts:properties-volume-spring-boot-starter:0.1.1'
-  implementation group: 'org.springframework', name: 'spring-core', version: '5.3.15'
+  implementation group: 'org.springframework', name: 'spring-core', version: '6.0.8'
   // drools engine dependency
   implementation group: 'org.drools', name: 'drools-core', version: versions.drools
   implementation group: 'org.drools', name: 'drools-compiler', version: versions.drools
