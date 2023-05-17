@@ -238,7 +238,7 @@ dependencies {
   implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '2.0.1'
   implementation group: 'com.nimbusds', name: 'nimbus-jose-jwt', version: '8.19'
   implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
-  implementation 'commons-io:commons-io:2.8.0'
+  implementation 'commons-io:commons-io:2.12.0'
   //CVE-2021-35515, CVE-2021-35516, CVE-2021-35517, CVE-2021-36090:
   // To be cleaned up later
   implementation group: 'org.apache.commons', name: 'commons-compress', version: '1.21'
@@ -275,7 +275,7 @@ dependencies {
   smokeTestImplementation group: 'net.serenity-bdd', name: 'serenity-rest-assured', version: versions.serenity
   smokeTestImplementation group: 'net.serenity-bdd', name: 'serenity-spring', version: versions.serenity
   smokeTestImplementation group: 'io.rest-assured', name: 'rest-assured', version: versions.rest_assured
-  smokeTestImplementation group: 'commons-io', name: 'commons-io', version: '2.8.0'
+  smokeTestImplementation group: 'commons-io', name: 'commons-io', version: '2.12.0'
   integrationTestImplementation group: 'net.serenity-bdd', name: 'serenity-core', version: versions.serenity
   integrationTestImplementation group: 'net.serenity-bdd', name: 'serenity-junit', version: versions.serenity
   integrationTestImplementation group: 'net.serenity-bdd', name: 'serenity-rest-assured', version: versions.serenity
