@@ -209,7 +209,7 @@ dependencies {
     exclude group: 'com.google.protobuf', module: 'protobuf-java'
   }
   //Dependent on drools Jar. Can be removed CVE-2021-26291
-  implementation group: 'org.apache.maven', name: 'maven-core', version: '3.8.1'
+  implementation group: 'org.apache.maven', name: 'maven-core', version: '3.9.4'
   implementation group: 'org.flywaydb', name: 'flyway-core', version: '8.5.7'
   //Added for Spring Security Implementation
   implementation(group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: versions.springBoot)
